@@ -1,0 +1,17 @@
+{
+  "name": "clinical-research-copilot",
+  "version": "0.1.0",
+  "description": "Klinik arastirma tasariminin literatur taramasindan etik kurul basvurusu ve yayina kadar olan adimlarinda rehberlik eden skill ve agent seti. Klinik tip ile AI/ML'in kesistigi calismalar icin optimize edilmistir, ama genel klinik arastirma tasarimi icin de kullanilabilir.",
+  "author": {
+    "email": "farukss54@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "clinical-research",
+    "emergency-medicine",
+    "machine-learning",
+    "study-design",
+    "biostatistics",
+    "research-methodology"
+  ]
+}

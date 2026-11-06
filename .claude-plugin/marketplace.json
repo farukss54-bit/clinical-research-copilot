@@ -1,0 +1,13 @@
+{
+  "name": "clinical-research-copilot-marketplace",
+  "owner": {
+    "email": "farukss54@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "clinical-research-copilot",
+      "source": "./",
+      "description": "Klinik arastirma tasarim pipeline'i: literatur bosluk taramasi -> hipotez -> tasarim/orneklem -> veri/SAP -> etik kurul -> yayin."
+    }
+  ]
+}
