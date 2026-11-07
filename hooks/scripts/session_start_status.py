@@ -19,6 +19,7 @@ OPTIONAL = [
     ("00_gap_analysis.md", "gap check"),
     ("02a_prediction_model_plan.md", "prediction-model plan"),
     ("04a_llm_extraction_protocol.md", "LLM extraction protocol"),
+    ("06a_committee_requirements.md", "committee requirements"),
 ]
 
 

@@ -31,6 +31,7 @@ NEXT_STEP = {
         "Next: run ethics-application. Consider having biostatistics-reviewer review the SAP first."
     ),
     "06_ethics_application.md": "Next: run journal-manuscript for venue choice and manuscript outline.",
+    "06a_committee_requirements.md": "Next: check the extracted requirements with the user, then draft or update 06_ethics_application.md to match.",
     "07_manuscript_plan.md": "All pipeline phases have a file for this study.",
 }
 

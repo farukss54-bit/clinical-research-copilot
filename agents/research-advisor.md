@@ -30,6 +30,7 @@ research/<study-slug>/
   04a_llm_extraction_protocol.md  optional module: llm-extraction-validation
   05_sap.md                       sap-builder
   06_ethics_application.md        ethics-application
+  06a_committee_requirements.md   optional: requirements extracted from the committee's own form/directive
   07_manuscript_plan.md           journal-manuscript
 ```
 

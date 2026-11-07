@@ -5,6 +5,7 @@ Use this file when the application is for a Turkish institution. It is orientati
 ## Committee and forms
 
 - Retrospective, observational, chart-review studies on humans typically go to a **Non-Interventional Clinical Research Ethics Committee** (Turkish: *Girişimsel Olmayan Klinik Araştırmalar Etik Kurulu*). Checked only at the level of one example: the Ankara Medipol University directive for that committee defines non-interventional research to include "dosya ve görüntü kayıtları gibi retrospektif arşiv taramaları" (retrospective archive reviews such as file and image records). That directive names the Ministry of Health's *Klinik Araştırmalar Hakkında Yönetmelik* (Resmî Gazete 13 April 2013, No. 28617) as its basis; that regulation was **not read** and its current status was not checked, and other university directives cite different dates. Committee names, scope and forms are institution-specific *(verify for your institution)*.
+- Ask the user for their committee's directive (*yönerge*) and current application form. They decide the structure and level of detail; use them in committee mode (see `../SKILL.md`, step 3).
 - Training and research hospitals, university hospitals and some private hospitals have their own form and meeting calendar *(verify for your institution)*.
 - Interventional drug/device studies follow different regulatory routes and are outside this skill.
 - Many institutions also require administrative permission (for example from the hospital management) to access patient records for research *(verify)*.
