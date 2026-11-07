@@ -1,8 +1,8 @@
 {
   "name": "clinical-research-copilot-marketplace",
   "owner": {
-    "name": "TODO-AUTHOR-NAME",
-    "url": "https://github.com/TODO-GITHUB-USER"
+    "name": "farukss54-bit",
+    "url": "https://github.com/farukss54-bit"
   },
   "plugins": [
     {
@@ -10,10 +10,11 @@
       "source": "./",
       "description": "Clinical research design pipeline: hypothesis -> design/feasibility -> sample size -> data dictionary -> SAP -> ethics -> manuscript, with optional prediction-model/ML and LLM-extraction modules and reviewer agents.",
       "author": {
-        "name": "TODO-AUTHOR-NAME",
-        "url": "https://github.com/TODO-GITHUB-USER"
+        "name": "farukss54-bit",
+        "url": "https://github.com/farukss54-bit"
       },
-      "version": "0.3.0"
+      "version": "0.3.1",
+      "homepage": "https://github.com/farukss54-bit/clinical-research-copilot"
     }
   ],
   "description": "Marketplace for clinical-research-copilot: a research-design pipeline for clinicians (hypothesis, design, sample size, SAP, ethics, manuscript)."

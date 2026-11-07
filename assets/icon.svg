@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <rect width="1024" height="1024" fill="#0E2A33"/>
+  <g transform="translate(512 512) scale(1.1) translate(-512 -547)">
+  <!-- optional-module detours (rejoin the main line) -->
+  <g fill="none" stroke="#7FD1C7" stroke-width="14" stroke-linecap="round">
+    <path d="M392 470 C392 590 420 650 452 650 C484 650 512 590 512 470"/>
+    <path d="M633 470 C633 590 661 650 693 650 C725 650 754 590 754 470"/>
+  </g>
+  <g fill="#0E2A33" stroke="#7FD1C7" stroke-width="14">
+    <circle cx="452" cy="650" r="30"/>
+    <circle cx="693" cy="650" r="30"/>
+  </g>
+  <!-- main pipeline -->
+  <path d="M150 470 H874" stroke="#E8EEF0" stroke-width="22" stroke-linecap="round"/>
+  <g fill="#E8EEF0">
+    <circle cx="150" cy="470" r="38"/>
+    <circle cx="271" cy="470" r="38"/>
+    <circle cx="392" cy="470" r="38"/>
+    <circle cx="512" cy="470" r="38"/>
+    <circle cx="633" cy="470" r="38"/>
+    <circle cx="754" cy="470" r="38"/>
+  </g>
+  <g fill="#0E2A33">
+    <circle cx="150" cy="470" r="13"/>
+    <circle cx="271" cy="470" r="13"/>
+    <circle cx="392" cy="470" r="13"/>
+    <circle cx="512" cy="470" r="13"/>
+    <circle cx="633" cy="470" r="13"/>
+    <circle cx="754" cy="470" r="13"/>
+  </g>
+  <!-- end node: the finished study -->
+  <circle cx="874" cy="470" r="62" fill="#F2B35A"/>
+  <path d="M846 472 L868 494 L906 446" fill="none" stroke="#0E2A33" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

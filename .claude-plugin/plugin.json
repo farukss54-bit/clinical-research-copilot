@@ -1,10 +1,10 @@
 {
   "name": "clinical-research-copilot",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Guides clinical research design from hypothesis to ethics application and manuscript: skills for hypothesis, design and feasibility, sample size, data dictionary, SAP, ethics, and venue selection, plus optional prediction-model/ML and LLM-extraction modules and reviewer agents. Literature review is delegated to dedicated tools (for example the lr-ai plugin).",
   "author": {
-    "name": "TODO-AUTHOR-NAME",
-    "url": "https://github.com/TODO-GITHUB-USER"
+    "name": "farukss54-bit",
+    "url": "https://github.com/farukss54-bit"
   },
   "license": "MIT",
   "keywords": [
@@ -18,5 +18,8 @@
     "machine-learning",
     "llm-extraction",
     "research-methodology"
-  ]
+  ],
+  "homepage": "https://github.com/farukss54-bit/clinical-research-copilot",
+  "repository": "https://github.com/farukss54-bit/clinical-research-copilot",
+  "icon": "./assets/icon.png"
 }

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+- Added project icon (`assets/icon.png`), author/homepage/repository metadata and the license holder.
+
 ## 0.3.0
 
 - All skills, agents and documentation rewritten in English; Turkish remains available through the user's language and a Turkey-specific ethics reference.

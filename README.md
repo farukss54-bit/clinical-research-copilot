@@ -47,7 +47,7 @@ claude --plugin-dir /path/to/clinical-research-copilot
 Persistent install through the bundled marketplace:
 
 ```
-/plugin marketplace add /path/to/clinical-research-copilot      # or a GitHub repo: <user>/<repo>
+/plugin marketplace add /path/to/clinical-research-copilot      # or from GitHub: farukss54-bit/clinical-research-copilot
 /plugin install clinical-research-copilot@clinical-research-copilot-marketplace
 ```
 
