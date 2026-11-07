@@ -26,7 +26,7 @@ Lock down **how the data will be analyzed before analysis starts**, which reduce
 6. **Reporting guideline**:
    - Observational cohort / case-control / cross-sectional → STROBE (and its extension for routinely collected health data, if the data come from records)
    - Diagnostic accuracy → STARD
-   - Prediction model development/validation, including ML → the TRIPOD family (candidate statements and versions are listed, unverified, in `../prediction-model-design/references/guidelines-and-sample-size.md`) and a risk-of-bias tool for prediction studies
+   - Prediction model development/validation, including ML → TRIPOD+AI, with PROBAST+AI as the appraisal tool (verified citations in `../prediction-model-design/references/guidelines-and-sample-size.md`)
    - Studies that use an LLM → check whether an LLM-specific reporting extension applies (see `llm-extraction-validation`)
    List the main checklist headings and confirm the study will be able to report them. Confirm the current version of the guideline before citing it.
 7. **Software**: name the language and packages (R/Python), matched to the user's stated statistical experience. Prefer a small, well-known toolset over an elaborate one.
