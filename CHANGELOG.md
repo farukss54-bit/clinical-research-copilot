@@ -4,8 +4,9 @@
 
 - Stage 1: `prediction-model-design/references/guidelines-and-sample-size.md` now holds PubMed-verified citations for TRIPOD+AI, PROBAST+AI, the Riley et al. development and external-validation sample-size criteria, and Collins 2016 / Snell 2021. Items not yet checked (STROBE/RECORD, STARD-AI, TRIPOD-LLM, the `pmsampsize` software citation, ML-specific sample-size simulations) stay marked unverified.
 - Stage 2: added PubMed-verified citations for TRIPOD-LLM, STARD 2015, STARD-AI (with its Author Correction, content not checked), STROBE and RECORD; `sap-builder` and `llm-extraction-validation` now name them. Open: TRIPOD-AI supersession and any post-2015 RECORD update.
+- Stage 3: `ethics-application/references/turkey-kvkk.md` rewritten against official texts (Law 6698 consolidated text with the 2024 amendments, Board Decision 2018/10, the 2019 Personal Health Data Regulation, the 2017 anonymization regulation, the 2024 cross-border transfer regulation). Corrections: the 2016 health-data regulation is repealed; Article 6(3) has no research-specific ground; research routes are Articles 28(1)(b) and (c) via Article 16 of the 2019 regulation. Still unverified: the national basis for non-interventional ethics committees, consent-waiver practice, administrative-permission and form-language requirements.
 - Restored the executable bit on `hooks/run.sh` and `hooks/scripts/session_start_status.py` (lost when the archive was extracted on Windows).
-- Pending: stage 2 (TRIPOD-LLM, STARD-AI, RECORD) and stage 3 (KVKK items).
+- Pending before release: version bump to 0.4.0 in `plugin.json` and `marketplace.json`.
 
 ## 0.3.1
 
