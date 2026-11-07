@@ -1,13 +1,20 @@
 {
   "name": "clinical-research-copilot-marketplace",
   "owner": {
-    "email": "farukss54@gmail.com"
+    "name": "TODO-AUTHOR-NAME",
+    "url": "https://github.com/TODO-GITHUB-USER"
   },
   "plugins": [
     {
       "name": "clinical-research-copilot",
       "source": "./",
-      "description": "Klinik arastirma tasarim pipeline'i: literatur bosluk taramasi -> hipotez -> tasarim/orneklem -> veri/SAP -> etik kurul -> yayin."
+      "description": "Clinical research design pipeline: hypothesis -> design/feasibility -> sample size -> data dictionary -> SAP -> ethics -> manuscript, with reviewer agents.",
+      "author": {
+        "name": "TODO-AUTHOR-NAME",
+        "url": "https://github.com/TODO-GITHUB-USER"
+      },
+      "version": "0.2.0"
     }
-  ]
+  ],
+  "description": "Marketplace for clinical-research-copilot: a research-design pipeline for clinicians (hypothesis, design, sample size, SAP, ethics, manuscript)."
 }

@@ -32,18 +32,26 @@ Birden fazla calismayi paralel yurutebilirsin (her biri kendi `<calisma-slug>` k
 
 ## Kurulum
 
-**Yerel (kisisel) kullanim:**
+**Yerel gelistirme / deneme (tek oturumluk):**
 ```
-/plugin install /path/to/clinical-research-copilot
+claude --plugin-dir /path/to/clinical-research-copilot
 ```
-(veya Claude Code'un guncel plugin kurulum komutuyla — surumler arasinda komut adi degisebilir, `/plugin` ile baslayan komutlari kontrol et.)
 
-**Daha genis dagitim (GitHub uzerinden):**
-1. Bu klasoru bir GitHub reposuna push et.
-2. Baska bir kullanici: `/plugin marketplace add <github-url>` ile bu repoyu (kendi `.claude-plugin/marketplace.json` dosyasi sayesinde) bir marketplace olarak ekler.
-3. Ardindan `/plugin install clinical-research-copilot` ile plugin'i kurar.
+**Kalici kurulum (marketplace uzerinden):**
+```
+/plugin marketplace add /path/to/clinical-research-copilot      # veya GitHub: <kullanici>/<repo>
+/plugin install clinical-research-copilot@clinical-research-copilot-marketplace
+```
 
-> Not: Plugin/marketplace dosya semasi Claude Code surumleriyle degisebilir. Kurulumda hata alirsan, kullandigin surumun guncel plugin dokumantasyonuna gore `plugin.json`/`marketplace.json` alanlarini dogrula.
+Kurulum sonrasi `claude plugin validate .` ile manifest dogrulanabilir.
+
+**Koordinator agent'i ana agent olarak calistir:** alt-agent'lar baska alt-agent cagiramaz, bu yuzden
+`research-advisor` hakem agent'larini (methodology-critic, biostatistics-reviewer, ethics-drafter) ancak ana
+agent olarak calisirsa cagirabilir:
+```
+claude --agent clinical-research-copilot:research-advisor
+```
+Skill'ler (`/clinical-research-copilot:sample-size-power` vb.) ise normal oturumda dogrudan kullanilabilir.
 
 ## Literatur/veri araclari (connector) stratejisi
 
@@ -51,15 +59,15 @@ Skill'ler calisirken once su an baglı olan MCP connector'larini (PubMed, Consen
 
 ## Hook davranisi
 
-Tum hook'lar **yumusaktir**: hicbir islemi engellemez, sadece bilgilendirici mesaj yazdirir.
+Tum hook'lar **yumusaktir**: hicbir islemi engellemez, sadece Claude'a bilgi ekler.
 
 - `SessionStart`: `research/*/` projelerin varsa hangi fazda oldugunu ozetler.
-- `PostToolUse` (Write/Edit): ilgili faz dosyasi yazildiginda bir sonraki adimi onerir; dosya adi hasta/saglik verisi izlenimi veriyorsa KVKK hatirlatmasi yapar.
+- `PostToolUse` (Write/Edit): ilgili faz dosyasi yazildiginda bir sonraki adimi onerir; yol/dosya adi hasta verisi izlenimi veriyorsa (`hasta`, `patient`, `hbys`, `ehr`, `vaka`... + csv/xlsx/json vb.) KVKK hatirlatmasi ekler. Bu kontrol yalnizca Claude'un yazdigi dosyalara bakar; `Bash` ile uretilen veya zaten diskte duran veriyi yakalamaz.
 
-Hook script'leri `python3` gerektirir (standart kutuphane disinda bagimlilik yoktur).
+Hook'lar `hooks/run.sh` uzerinden `python3`, `python` veya `py -3` yorumlayicilarindan calisan ilkini kullanir (Windows'ta `python3` genellikle Microsoft Store kisayoludur; bu yuzden her aday once denenir). Hicbiri yoksa hook sessizce atlanir. Windows'ta `sh` icin Git for Windows (Git Bash) gerekir. Standart kutuphane disinda bagimlilik yoktur.
 
 ## Onemli sinirlamalar
 
 - Bu plugin **hukuki veya istatistiksel danismanligin yerine gecmez**. Etik kurul/KVKK ciktilari her zaman "taslak" olarak isaretlenir ve kurumsal/hukuki teyit gerektirir; orneklem/SAP ciktilari bir biyoistatistikci tarafindan gozden gecirilmelidir (`biostatistics-reviewer` bunun otomatik bir yerine gecmesi degil, ilk-gecis bir kontroldur).
 - Serbest metinden AI-destekli veri cikarimi onerilirse, mutlaka bir manuel dogrulama alt-ornegiyle birlikte kullanilmalidir.
-- Plugin hic bir yere otomatik veri gondermez/yuklemez; sadece yerel markdown belgeleri uretir.
+- Plugin kendisi herhangi bir yere veri yuklemez ve yalnizca yerel markdown belgeleri uretir. **Ancak** Claude'un okudugu her dosya ve yazdiginiz her istem modele (Anthropic API) gonderilir. Hasta duzeyi veriyi, kurumunuzun onayi ve kimliksizlestirme olmadan Claude'a okutmayin; bu plugin'in hook'lari bunu teknik olarak engellemez, yalnizca hatirlatir.

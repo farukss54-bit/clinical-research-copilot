@@ -19,6 +19,11 @@ PHASES = [
 
 def main():
     try:
+        sys.stdin.reconfigure(encoding="utf-8")
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+    try:
         payload = json.loads(sys.stdin.read() or "{}")
     except Exception:
         payload = {}
