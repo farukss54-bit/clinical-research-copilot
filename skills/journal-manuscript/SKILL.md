@@ -1,40 +1,50 @@
 ---
 name: journal-manuscript
-description: Calismanin kapsamina, bulgularina ve kullanicinin hedeflerine (deneyim kazanma vs yuksek etki faktoru vs doçentlik puani) gore hedef dergi/kongre onerir ve IMRAD formatinda bir makale/sunum iskeleti olusturur. Kullanici "nereye gonderelim", "dergi secimi", "makale taslagi", "abstract yazalim" dedi mi kullan.
+description: >-
+  Picks target journals or conferences based on the study, its findings and the author's goals (first publication, impact, indexing, career requirements), screens for predatory venues, and builds an IMRaD manuscript or abstract skeleton aligned to the reporting guideline. Use when the user says "where should we submit", "choose a journal", "draft the abstract", "manuscript outline". (Türkçe: dergi seçimi, makale taslağı.)
 ---
 
-# Dergi/Kongre Secimi ve Makale Iskeleti
+# Journal / Conference Selection and Manuscript Skeleton
 
-## Amac
+## Purpose
 
-Tamamlanan (veya tamamlanmaya yakin) bir calismayi, uygun bir hedefe (dergi/kongre) ve o hedefin beklentilerine uygun bir taslaga baglamak.
+Connect a finished (or nearly finished) study to a suitable venue and to a draft structure that fits that venue's expectations.
 
-## Girdi
+## Input
 
-Mumkun oldugunca tum `research/<slug>/*.md` dosyalari (en azindan hipotez, tasarim, SAP; sonuclar varsa onlar da).
+As many `research/<slug>/*.md` files as exist (at least hypothesis, design and SAP; also `02a`, `04a` and `06` when present; results if available). Reviewer reports (for example from `methodology-critic`) are used if the user saved them under `research/<slug>/reviews/`.
 
-## Adimlar
+## Steps
 
-1. **Hedef profili belirle**: kullanicinin onceligi ne (ilk deneyim/yayin sayisi mi, yuksek etki faktoru mu, belirli bir doçentlik kriteri mi)? Bu, agresif/iddiali bir dergi hedefi mi, yoksa daha erisilebilir bir dergi mi secilecegini belirler.
-2. **Dergi/kongre adaylari oner**: calismanin konusuna (acil tip, norolojide/stroke, tibbi informatik/AI) ve kapsamina (orijinal arastirma / proof-of-concept / kisa rapor) uygun 3-5 aday oner; her biri icin kapsam uyumu, tahmini kabul zorlugu, ve biliniyorsa yayin ucreti (APC) / acik erisim politikasi notu ekle. Kesin/guncel etki faktoru sayilarini iddia etmeden once WebSearch ile dogrula, eski/hatali rakam verme.
-3. **Raporlama standardina uy**: SAP'ta secilen checklist'e (STROBE/TRIPOD/TRIPOD-AI/STARD) gore makale iskeletini olustur; bu checklist dergi basvurusunda genelde zorunlu ekstra belge olarak istenir.
-4. **IMRAD iskeleti** olustur (Introduction - Methods - Results - Discussion), her bolum icin:
-   - Introduction: gap-analysis'teki bosluk + arastirma sorusu
-   - Methods: tasarim + degiskenler + SAP ozeti (raporlama standardinin gerektirdigi detay seviyesinde)
-   - Results: (bulgular hazirsa) tablolar/sekiller icin bir iskelet, hazır degilse placeholder ve hangi tablo/sekillerin gerekecegi listesi (orn. Tablo 1: hasta ozellikleri, Tablo 2: model performansi, Sekil 1: ROC egrisi)
-   - Discussion: bulgunun literaturdeki yerini (gap-analysis'e geri referansla), sinirliliklar (methodology-critic bulgulari varsa buraya tasi), klinik anlam
-5. Abstract/kongre sunumu isteniyorsa, dergi makalesinden once kisa bir abstract/poster iskeleti de olustur — bu genelde daha hizli bir ilk akademik kazanim saglar (kullanicinin "deneyim kazanma" hedefine uygun).
+1. **Profile the goal**: what matters most to the author — a first publication or conference presentation, high impact, a specific indexing database, an academic-promotion requirement? Ask what *counts* for them (for example required indexes or quartiles). This decides whether to aim ambitiously or realistically.
+2. **Suggest 3–5 candidate venues** that match the topic and scope (original research / short report / proof of concept). For each: scope fit, rough acceptance difficulty, open-access policy and article processing charge (APC) if known, and indexing. **Do not quote an impact factor, quartile or APC from memory**: verify it with a search and cite the source, or say "check the current figure".
+3. **Predatory-venue screen** for every suggestion: is it indexed in the databases the author needs, listed in a directory of open-access journals when it claims to be open access, with transparent peer review and editorial board? Warn about unsolicited-invitation journals.
+4. **Reporting guideline**: use the checklist chosen in the SAP (STROBE, STARD, a TRIPOD-family statement for prediction models). It is usually a required submission attachment.
+5. **IMRaD skeleton**, section by section:
+   - Introduction: the gap and the research question.
+   - Methods: design, variables, SAP summary, at the detail level the reporting guideline demands.
+   - Results: if findings exist, a skeleton of the tables and figures; if not, placeholders and a list of what will be needed (Table 1 patient characteristics, Table 2 main results or model performance, Figure 1 flow diagram, calibration plot…).
+   - Discussion: position relative to the literature, limitations (carry over `methodology-critic` findings from `research/<slug>/reviews/` if saved), clinical meaning.
+6. If useful, also produce a **short abstract or poster skeleton**; a conference abstract is often the fastest first output.
 
-## Cikti
+## Output
 
 `research/<slug>/07_manuscript_plan.md`:
-- Hedef profili ve secilen dergi/kongre adaylari (gerekceli)
-- Uygulanacak raporlama standardi
-- IMRAD iskeleti (bolum bolum, hazır olan/olmayan icerik acikca ayrilmis)
-- Gerekli tablo/sekil listesi
-- (istenirse) kisa abstract/poster iskeleti
 
-## Kalite kontrolu
+- Author goal profile and venue candidates with rationale and verification notes
+- Reporting guideline to follow
+- IMRaD skeleton (what is ready vs not)
+- Table/figure list
+- Optional abstract/poster skeleton
 
-- Dergi onerirken guncel olmayan/iddiali etki faktoru rakamlari verme; dogrulanamiyorsa "guncel rakami kontrol etmen gerekir" de.
-- Sonuclar henuz yoksa Results/Discussion'i hayali veriyle doldurma; sadece iskelet ve ne turde tablo/sekil gerekecegini goster.
+## Quality checks
+
+- No unverified or outdated impact-factor figures.
+- If results do not exist, do not invent them; give structure only.
+- Output language: manuscripts and abstracts in English unless the target venue requires otherwise.
+
+## Conventions
+
+- `<slug>` is the study's short folder name. If none exists, ask the user for one (or derive a short kebab-case name from the topic) and create `research/<slug>/`.
+- If an input file listed above is missing, say so, continue with what the user tells you, and mark the gap as "not specified" in the output. Do not invent data, numbers or sources.
+- Never put identifiable patient data into this session or into any search.

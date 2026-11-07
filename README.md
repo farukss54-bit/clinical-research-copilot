@@ -1,73 +1,93 @@
 # clinical-research-copilot
 
-Klinik arastirma tasariminin **literatur boslugu taramasindan etik kurul basvurusu ve yayin/dergi secimine kadar** olan adimlarinda rehberlik eden bir Claude Code plugin'i. Ozellikle klinik tip ile AI/ML'in kesistigi calismalar icin optimize edilmistir, ama genel klinik arastirma tasarimi icin de kullanilabilir.
+A Claude Code plugin that guides a clinician-researcher through the design of a clinical study: **hypothesis → design and feasibility → sample size → data dictionary → statistical analysis plan → ethics application → venue and manuscript outline.** It adds optional modules for **prediction-model / ML studies** and for **LLM-assisted extraction from free-text notes**, and four reviewer agents.
 
-Konusma/arayuz dili **Turkce**; SAP ve makale taslagi gibi uluslararasi yayina yonelik akademik ciktilar **Ingilizce**, etik kurul basvurusu gibi yerel-kurumsal belgeler Turkce uretilir.
+It does not replace a biostatistician, a data-protection officer, or your ethics committee. Its outputs are drafts.
 
-## Icerik
+## What is inside
 
-| Klasor | Icerik |
+| Folder | Contents |
 |---|---|
-| `agents/` | `research-advisor` (ana koordinator) + `biostatistics-reviewer`, `ethics-drafter`, `methodology-critic` (alt-agent'lar) |
-| `skills/` | 8 skill: `literature-gap-scan`, `hypothesis-formulation`, `study-design-feasibility`, `sample-size-power`, `data-dictionary-crf`, `sap-builder`, `ethics-application`, `journal-manuscript` |
-| `hooks/` | Yumusak (engellemeyen) hatirlaticilar: proje durumu ozeti, bir sonraki adim onerisi, KVKK/hassas veri uyarisi |
+| `skills/` core | `hypothesis-formulation`, `study-design-feasibility`, `sample-size-power`, `data-dictionary-crf`, `sap-builder`, `ethics-application`, `journal-manuscript` |
+| `skills/` optional | `quick-gap-check` (lightweight phase 0), `prediction-model-design` (ML module), `llm-extraction-validation` (LLM module) |
+| `agents/` | `research-advisor` (coordinator) plus reviewers `biostatistics-reviewer`, `methodology-critic`, `ethics-drafter` |
+| `hooks/` | Soft reminders: project status at session start, next-step suggestion, patient-data reminder |
 
-## Proje yapisi (konvansiyon)
+## Project convention
 
-Her arastirma projesi, calistigin dizinde `research/<calisma-slug>/` altinda numarali fazlarla ilerler:
+Each study lives in `research/<study-slug>/` in your working directory:
 
 ```
-research/<calisma-slug>/
-  00_gap_analysis.md
-  01_hypothesis.md
-  02_design_feasibility.md
-  03_sample_size.md
-  04_data_dictionary.md
-  05_sap.md
-  06_ethics_application.md
-  07_manuscript_plan.md
+00_gap_analysis.md              optional   literature / gap check
+01_hypothesis.md
+02_design_feasibility.md
+02a_prediction_model_plan.md    optional   prediction / ML studies
+03_sample_size.md
+04_data_dictionary.md
+04a_llm_extraction_protocol.md  optional   LLM-assisted extraction
+05_sap.md
+06_ethics_application.md
+07_manuscript_plan.md
 ```
 
-Birden fazla calismayi paralel yurutebilirsin (her biri kendi `<calisma-slug>` klasorunde). `research-advisor` agent'i bu dosyalara bakarak hangi fazda oldugunu kendi anlar.
+Several studies can run in parallel, each in its own folder. The advisor works out the current phase from which files exist.
 
-## Kurulum
+### Literature review (phase 0)
 
-**Yerel gelistirme / deneme (tek oturumluk):**
+Phase 0 is optional. For a real literature review (thesis, grant, systematic or scoping review) use a dedicated tool: the **lr-ai** plugin is recommended, and other literature connectors (PubMed, Consensus, Elicit) work too. Save the result as `00_gap_analysis.md`. If you only need a quick originality check, the lightweight `quick-gap-check` skill does that.
+
+## Install
+
+Try it for one session:
+
 ```
 claude --plugin-dir /path/to/clinical-research-copilot
 ```
 
-**Kalici kurulum (marketplace uzerinden):**
+Persistent install through the bundled marketplace:
+
 ```
-/plugin marketplace add /path/to/clinical-research-copilot      # veya GitHub: <kullanici>/<repo>
+/plugin marketplace add /path/to/clinical-research-copilot      # or a GitHub repo: <user>/<repo>
 /plugin install clinical-research-copilot@clinical-research-copilot-marketplace
 ```
 
-Kurulum sonrasi `claude plugin validate .` ile manifest dogrulanabilir.
+Check the manifests with `claude plugin validate .`.
 
-**Koordinator agent'i ana agent olarak calistir:** alt-agent'lar baska alt-agent cagiramaz, bu yuzden
-`research-advisor` hakem agent'larini (methodology-critic, biostatistics-reviewer, ethics-drafter) ancak ana
-agent olarak calisirsa cagirabilir:
+### Run the coordinator as the main agent
+
+Subagents cannot spawn other subagents, so `research-advisor` can call the reviewer agents only when it is the session's main agent:
+
 ```
 claude --agent clinical-research-copilot:research-advisor
 ```
-Skill'ler (`/clinical-research-copilot:sample-size-power` vb.) ise normal oturumda dogrudan kullanilabilir.
 
-## Literatur/veri araclari (connector) stratejisi
+The skills (for example `/clinical-research-copilot:sample-size-power`) can be used in any normal session.
 
-Skill'ler calisirken once su an baglı olan MCP connector'larini (PubMed, Consensus, Elicit, ClinicalTrials.gov, bioRxiv vb.) kullanmayi dener. Bu connector'lar hesabina ozgudur ve plugin icine gomulu degildir — baska bir kullanicida/makinede otomatik gelmez. Baglı degillerse skill'ler once bunu baglamani onerir, istemezsen web aramasina (WebSearch) duser. Yani plugin, connector'lar olmadan da calisir ama literatur taramasi daha sinirli olur.
+## Language
 
-## Hook davranisi
+Chat in whatever language you like. Research documents (SAP, manuscript plan) are written in English by default; an ethics application follows your institution's required language. Turkey-specific ethics and KVKK guidance is in `skills/ethics-application/references/turkey-kvkk.md`.
 
-Tum hook'lar **yumusaktir**: hicbir islemi engellemez, sadece Claude'a bilgi ekler.
+## Connectors
 
-- `SessionStart`: `research/*/` projelerin varsa hangi fazda oldugunu ozetler.
-- `PostToolUse` (Write/Edit): ilgili faz dosyasi yazildiginda bir sonraki adimi onerir; yol/dosya adi hasta verisi izlenimi veriyorsa (`hasta`, `patient`, `hbys`, `ehr`, `vaka`... + csv/xlsx/json vb.) KVKK hatirlatmasi ekler. Bu kontrol yalnizca Claude'un yazdigi dosyalara bakar; `Bash` ile uretilen veya zaten diskte duran veriyi yakalamaz.
+Skills use connected literature and data connectors (PubMed, Consensus, Elicit, ClinicalTrials.gov, bioRxiv) when present and fall back to WebSearch. Connectors belong to your account and are not bundled with this plugin.
 
-Hook'lar `hooks/run.sh` uzerinden `python3`, `python` veya `py -3` yorumlayicilarindan calisan ilkini kullanir (Windows'ta `python3` genellikle Microsoft Store kisayoludur; bu yuzden her aday once denenir). Hicbiri yoksa hook sessizce atlanir. Windows'ta `sh` icin Git for Windows (Git Bash) gerekir. Standart kutuphane disinda bagimlilik yoktur.
+## Hooks
 
-## Onemli sinirlamalar
+All hooks are soft: they never block an action; they only add information for Claude.
 
-- Bu plugin **hukuki veya istatistiksel danismanligin yerine gecmez**. Etik kurul/KVKK ciktilari her zaman "taslak" olarak isaretlenir ve kurumsal/hukuki teyit gerektirir; orneklem/SAP ciktilari bir biyoistatistikci tarafindan gozden gecirilmelidir (`biostatistics-reviewer` bunun otomatik bir yerine gecmesi degil, ilk-gecis bir kontroldur).
-- Serbest metinden AI-destekli veri cikarimi onerilirse, mutlaka bir manuel dogrulama alt-ornegiyle birlikte kullanilmalidir.
-- Plugin kendisi herhangi bir yere veri yuklemez ve yalnizca yerel markdown belgeleri uretir. **Ancak** Claude'un okudugu her dosya ve yazdiginiz her istem modele (Anthropic API) gonderilir. Hasta duzeyi veriyi, kurumunuzun onayi ve kimliksizlestirme olmadan Claude'a okutmayin; bu plugin'in hook'lari bunu teknik olarak engellemez, yalnizca hatirlatir.
+- `SessionStart`: summarizes the phase of each project under `research/`.
+- `PostToolUse` (Write/Edit): after a phase file is written, suggests the next step; if the path or file name suggests patient-level data (tokens such as `hasta`, `patient`, `hbys`, `ehr`, `vaka` plus a data extension such as csv/xlsx/json), adds a privacy reminder. It only sees files Claude writes; data created via `Bash` or already on disk is not covered.
+
+Hooks start through `hooks/run.sh`, which uses the first working interpreter among `python3`, `python` and `py -3` (on Windows `python3` is often a Microsoft Store stub, so each candidate is probed). If none works, the hook is skipped silently. On Windows, `sh` requires Git for Windows (Git Bash). There are no dependencies beyond the Python standard library.
+
+## Privacy and limits
+
+- This plugin does not upload anything itself and only produces local markdown documents. **But everything Claude reads and everything you type is sent to the model provider.** Do not have Claude read patient-level data unless your institution has approved it and the data are de-identified. The hooks only remind; they cannot enforce this.
+- Ethics and data-protection outputs are **drafts**; confirm them with your institution.
+- Sample-size and SAP outputs should be reviewed by a biostatistician. `biostatistics-reviewer` is a first-pass check, not a substitute.
+- Names and versions of reporting guidelines and numeric criteria in the ML modules are pointers to verify; check current versions before citing.
+- LLM-assisted extraction from notes must always be used with a manually validated sample.
+
+## License
+
+MIT, see `LICENSE`.

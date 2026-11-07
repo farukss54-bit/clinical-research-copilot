@@ -1,41 +1,51 @@
 ---
 name: study-design-feasibility
-description: Hipotez/soru netlestikten sonra uygun calisma tasarimini (kohort, vaka-kontrol, kesitsel, prediction model gelistirme vb.) secer, degisken listesini (exposure/outcome/confounder) cikarir ve en onemlisi FIZIBILITE denetimi yapar (hangi veri HBYS'de var, hangisi serbest metinde, zaman damgalari guvenilir mi, orneklem yeterli mi). Kullanici "tasarim secelim", "fizibilite", "hangi veri gerekli", "bu yapilabilir mi" dedi mi kullan.
+description: >-
+  Chooses the study design, lists variables (exposure, outcome, confounders) and audits feasibility: where each variable lives in the records, timestamp reliability, follow-up, case volume, selection bias. Use for "choose a design", "is this feasible", "which data do I need". (Türkçe - çalışma tasarımı, fizibilite.)
 ---
 
-# Calisma Tasarimi ve Fizibilite Denetimi
+# Study Design and Feasibility Audit
 
-## Amac
+## Purpose
 
-Soyut hipotezi, GERCEKTEN yurutulebilir bir plana donusturmek. Bu fazin basarisizligi (fizibilite sorunlari gec fark edilirse) projenin en pahali hatasidir — bu yuzden bu skill agirlikli olarak SORU SORMAYA ve mevcut veriyi denetlemeye odaklanir, hemen cozum uretmeye degil.
+Turn the abstract question into a plan that can really be executed. A feasibility problem found late is the most expensive mistake in a study, so this skill leans on **asking questions and auditing the available data**, not on producing solutions quickly.
 
-## Girdi
+## Input
 
 `research/<slug>/01_hypothesis.md`.
 
-## Adimlar
+## Steps
 
-1. **Tasarim tipini sec** ve gerekcelendir: retrospektif kohort / vaka-kontrol / kesitsel / prognostik-prediction model gelistirme / tani dogrulugu / sistematik derleme. ML tabanli prediction model calismalari genelde retrospektif kohort + model gelistirme+validasyon seklindedir; bunu acikca belirt.
-2. **Degisken listesi** cikar: outcome(lar), ana exposure/predictor(ler), bilinen confounder'lar (literatur taramasindan), demografik/klinik kovaryatlar.
-3. **Fizibilite denetimi** — kullaniciya asagidaki sorulari sor (cevaplari biliyorsa direkt iste, bilmiyorsa kucuk bir pilot chart review onerisiyle devam et):
-   - Her degisken HBYS'de YAPILANDIRILMIS bir alanda mi, yoksa serbest metinde mi? Serbest metindekiler icin cikarim stratejisi gerekecek (manuel abstraksiyon formu veya AI-destekli cikarim + dogrulama alt-ornegi) — bunu simdi isaretle, detayini data-dictionary-crf fazinda cikar.
-   - Kritik zaman damgalari (varsa) otomatik sistem kaydi mi (PACS/HBYS log) yoksa elle girilen mi?
-   - Outcome olcumu icin takip suresi gercekci mi (kullanicinin daha once belirttigi kisitlari — orn. "90 gun imkansiz" — burada uygula, in-hospital/taburculuk alternatiflerine don)?
-   - Yillik vaka hacmi ve mevcut retrospektif pencere, hedeflenen orneklem buyuklugune (sonraki fazda kesinlesecek ama kaba bir tahmin simdi yap) yeterli mi?
-   - Dahil etme/disli tutma kriterleri, secim yanliligi yaratacak sekilde daraltiliyor mu (methodology-critic'in sonra bakacagi bir konu ama ilk isaretleme burada)?
-   - Tek merkez mi coklu merkez mi; coklu merkezse veri uyumlulugu/standardizasyon sorunu var mi?
-4. Yukaridaki denetimde ciddi bir engel (orn. kritik outcome hic kayitli degil) bulunursa, hipotez fazina geri donup soruyu revize etmeyi ACIKCA oner — bu ileri geri gidis normaldir ve erken yakalanmasi degerlidir.
+1. **Pick and justify the design**: retrospective cohort, case-control, cross-sectional, prospective cohort, diagnostic accuracy, prognostic/prediction-model development and/or validation. (Systematic or scoping reviews are out of scope here: use a dedicated review tool such as the lr-ai plugin.) Make sure it fits the outcome and time window in the hypothesis. A prediction-model study is usually a (retrospective) cohort with model development and validation; say so.
+2. **List the variables**: outcome(s), main exposure(s) or predictor(s), known confounders (from the literature), demographic and clinical covariates. For each: definition, timing relative to the outcome, and data source.
+3. **Feasibility audit.** Ask the user these questions (if they know the answers, ask for them directly; if they do not, propose a small pilot chart review, and first confirm with the ethics committee secretariat or data-protection contact whether even a pilot record review needs approval):
+   - Is each variable in a **structured field** of the hospital information system / EHR, or only in **free text**? Free-text variables need an extraction strategy (manual abstraction form, or LLM-assisted extraction with a validation subsample); flag it now, detail it in the data-dictionary phase.
+   - Are critical **timestamps** system-generated (logs, PACS, laboratory systems) or manually entered?
+   - Is **follow-up** for the outcome realistic? Apply constraints the user has already stated; fall back to in-hospital or discharge outcomes when long follow-up is impossible.
+   - Do **annual case volume and the retrospective window** plausibly reach the sample size the study will need? (A rough estimate now; the exact one comes next.)
+   - Do the inclusion/exclusion criteria **create selection bias** (for example by excluding the sickest patients)? `methodology-critic` will look deeper later; flag the obvious ones here.
+   - **Single centre or multicentre**? If multicentre, are data definitions harmonized?
+   - Does the **prediction time point** exist in the data (all predictors available before the moment the model would be used)?
+4. If you find a serious blocker (for example the key outcome is not recorded), say so plainly and suggest going back to the hypothesis phase. Going back and forth is normal and cheap at this stage.
 
-## Cikti
+## Output
 
 `research/<slug>/02_design_feasibility.md`:
-- Secilen tasarim + gerekce
-- Degisken listesi (outcome/exposure/confounder, her biri icin veri kaynagi ve yapilandirilmis/serbest-metin durumu)
-- Fizibilite denetim sonuclari (yukaridaki sorularin cevaplari)
-- Tespit edilen riskler/acikla ve onerilen hafifletmeler
-- Pilot chart review onerisi (eger belirsizlik yuksekse, kac dosyalik bir on-tarama onerilir)
 
-## Kalite kontrolu
+- Chosen design and rationale
+- Variable table (outcome / exposure or predictor / confounder, source, structured vs free text)
+- Feasibility audit answers
+- Identified risks and proposed mitigations
+- Pilot chart-review proposal when uncertainty is high (how many records)
+- If it is a prediction-model or ML study: note that `prediction-model-design` should run before sample size
 
-- "Bu veri muhtemelen vardir" gibi varsayimlara dayanma — kullaniciya acikca sor, bilmiyorsa bunu bir "bilinmiyor, pilot tarama gerekir" olarak isaretle.
-- Tasarim secimini mutlaka hipotezdeki outcome/zaman penceresiyle tutarli kil.
+## Quality checks
+
+- Do not assume "this data probably exists". Ask. If the user does not know, record "unknown — pilot review needed".
+- Keep the design consistent with the outcome and time window in the hypothesis.
+
+## Conventions
+
+- `<slug>` is the study's short folder name. If none exists, ask the user for one (or derive a short kebab-case name from the topic) and create `research/<slug>/`.
+- If an input file listed above is missing, say so, continue with what the user tells you, and mark the gap as "not specified" in the output. Do not invent data, numbers or sources.
+- Never put identifiable patient data into this session or into any search.

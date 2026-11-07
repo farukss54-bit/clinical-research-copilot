@@ -1,7 +1,7 @@
 {
   "name": "clinical-research-copilot",
-  "version": "0.2.0",
-  "description": "Klinik arastirma tasariminin literatur taramasindan etik kurul basvurusu ve yayina kadar olan adimlarinda rehberlik eden skill ve agent seti. Klinik tip ile AI/ML'in kesistigi calismalar icin optimize edilmistir, ama genel klinik arastirma tasarimi icin de kullanilabilir.",
+  "version": "0.3.0",
+  "description": "Guides clinical research design from hypothesis to ethics application and manuscript: skills for hypothesis, design and feasibility, sample size, data dictionary, SAP, ethics, and venue selection, plus optional prediction-model/ML and LLM-extraction modules and reviewer agents. Literature review is delegated to dedicated tools (for example the lr-ai plugin).",
   "author": {
     "name": "TODO-AUTHOR-NAME",
     "url": "https://github.com/TODO-GITHUB-USER"
@@ -9,10 +9,14 @@
   "license": "MIT",
   "keywords": [
     "clinical-research",
-    "emergency-medicine",
-    "machine-learning",
     "study-design",
     "biostatistics",
+    "sample-size",
+    "statistical-analysis-plan",
+    "ethics-application",
+    "prediction-model",
+    "machine-learning",
+    "llm-extraction",
     "research-methodology"
   ]
 }

@@ -1,43 +1,51 @@
 ---
 name: hypothesis-formulation
-description: Literatur bosluk taramasindan cikan aday konuyu, test edilebilir bir arastirma sorusuna (PICO/PICOT formati) ve acik H0/H1 hipotezlerine donusturur. Kullanici "hipotez olustur", "arastirma sorusunu netlestir", "PICO" dedi mi ya da gap-scan tamamlandiktan sonra dogal bir sonraki adim oldugunda kullan.
+description: >-
+  Turns a topic or candidate gap into a testable research question in PICO/PICOT form with explicit hypotheses or a performance target. Use when the user says "formulate a hypothesis", "sharpen the research question", "PICO", or after an optional gap check. (Türkçe: hipotez, araştırma sorusu.)
 ---
 
-# Hipotez ve Arastirma Sorusu Formulasyonu
+# Hypothesis and Research Question Formulation
 
-## Amac
+## Purpose
 
-Genis/bulanik bir konu adayini, tasarimi ve analizi belirleyecek kadar KESKIN bir soruya indirmek.
+Reduce a broad or fuzzy topic to a question sharp enough to determine the design and the analysis.
 
-## Girdi
+## Input
 
-`research/<slug>/00_gap_analysis.md` (varsa) ve kullanicinin secimi/onceligi.
+`research/<slug>/00_gap_analysis.md` if it exists (it is optional), plus whatever the user tells you about their interest, setting and constraints.
 
-## Adimlar
+## Steps
 
-1. Secilen aday(lar)i PICO(T) formatina don:
-   - **P (Population)**: tam olarak kim? (yas araligi, tani kriteri, ED'ye basvuru yolu, haric tutulanlar)
-   - **I/E (Intervention/Exposure)**: ne olculuyor/uygulaniyor? (orn. bir ML modeli, bir gecikme suresi, bir klinik ozellik)
-   - **C (Comparison)**: neye kiyasla? (klasik skala, baska model, baska grup — "karsilastirmasiz" bir prediction model calismasi da gecerlidir ama bunu acikca belirt)
-   - **O (Outcome)**: tam olarak ne, hangi zaman penceresinde olculecek? (ornegin "taburculuk mRS", "hastane-ici mortalite", "72 saatlik revizit")
-   - **T (Time, varsa)**: takip suresi
-2. Birincil arastirma sorusunu TEK cumleyle yaz. Ikincil sorular varsa ayrica listele ama birinciyi net tut.
-3. Test edilebilir hipotezleri yaz: H0 (fark/iliski yok) ve H1 (beklenen yon, varsa). ML prediction model calismalarinda klasik H0/H1 yerine "birincil performans hedefi" (orn. "AUC >= 0.75" ya da "model X, klasik skala Y'den anlamli derecede daha iyi ayirt eder") tanimlanabilir — hangisinin uygun oldugunu calisma tipine gore sec ve nedenini belirt.
-4. Soruyu gap-analysis'teki bosluga ACIKCA baglayan 2-3 cumlelik bir gerekce yaz ("bu soru onemli cunku X calismasi Y'yi gostermis ama Z populasyonunda/aciyla hic bakilmamis").
-5. Olculebilirlik kontrolu: her terimin (outcome, exposure) somut, HBYS'den/kayitlardan cikarilabilir bir karsiligi var mi? Yoksa sorunu yeniden ifade et veya kullaniciyi uyar.
+1. Put the chosen candidate into **PICO(T)**:
+   - **P** — exactly who: age range, diagnostic criteria, route of presentation, exclusions.
+   - **I/E** — what is applied or measured: an intervention, an exposure, a clinical feature, a prediction model.
+   - **C** — compared with what: standard care, another model, another group. A prediction-model study without a comparator is valid, but say so explicitly.
+   - **O** — exactly what, over which time window (for example "in-hospital mortality", "72-hour return visit", "30-day readmission").
+   - **T** — follow-up period, if relevant.
+2. Write the **primary research question in one sentence**. List secondary questions separately, but keep the primary one unambiguous.
+3. State the hypotheses: H0 and H1 (with the expected direction if there is one). For prediction-model studies, a **primary performance objective** can replace classical H0/H1 (for example "discrimination and calibration acceptable in an external sample"); choose whichever fits the study type and say why. For prediction models, also record the intended use: who will use the prediction, at what moment, to decide what.
+4. Write 2–3 sentences linking the question to the gap: why it matters, what is known, what is missing. Use only background the user supplied or that is in `00_gap_analysis.md` (with sources); otherwise leave a labelled placeholder ("background needs a source") rather than writing it from memory.
+5. **Measurability check**: for every term (outcome, exposure, predictor) is there a concrete, extractable source (a registry field, a laboratory value, a documented note)? If not, rephrase the question or warn the user now.
 
-## Cikti
+## Output
 
 `research/<slug>/01_hypothesis.md`:
-- PICO(T) tablosu
-- Birincil arastirma sorusu (tek cumle)
-- Ikincil sorular (varsa)
-- H0/H1 veya performans hedefi
-- Gap-analysis baglantisi/gerekcesi
-- Olculebilirlik notlari (hangi degiskenin nereden gelecegi hakkinda ilk izlenim — detayli fizibilite bir sonraki fazda)
 
-## Kalite kontrolu
+- PICO(T) table
+- Primary research question (one sentence); secondary questions if any
+- H0/H1 or performance objective (and, for prediction models, the intended use)
+- Link to the gap / rationale
+- Measurability notes (first impressions of where each variable would come from; detailed feasibility is the next phase)
 
-- Soru tek bir birincil outcome'a indirgenmis mi (birden fazla birincil outcome, analiz planini ve orneklem hesabini karmasiklastirir)?
-- Zaman penceresi acik mi (orn. "mortalite" tek basina yetersiz, "hastane-ici mortalite" veya "30 gunluk mortalite" gibi netlestir)?
-- Kullanicinin daha once belirttigi kisitlar (orn. "90 gun takip imkansiz") hipotezle celisiyor mu — celisiyorsa simdi yakala, sonraki fazda degil.
+## Quality checks
+
+- One primary outcome only. Multiple primary outcomes complicate the sample-size calculation and the analysis. For a prediction-model study, the outcome is one, but name the primary performance measure (for example calibration slope or C-statistic) that will drive the sample size.
+- The outcome has a time window; "mortality" alone is not enough.
+- Constraints the user has already mentioned (for example limits on follow-up, data access or case volume) are respected. If they conflict with the hypothesis, catch it now, not two phases later.
+- If the study is a prediction-model or ML study, suggest the `prediction-model-design` skill as the next step after design/feasibility.
+
+## Conventions
+
+- `<slug>` is the study's short folder name. If none exists, ask the user for one (or derive a short kebab-case name from the topic) and create `research/<slug>/`.
+- If an input file listed above is missing, say so, continue with what the user tells you, and mark the gap as "not specified" in the output. Do not invent data, numbers or sources.
+- Never put identifiable patient data into this session or into any search.
