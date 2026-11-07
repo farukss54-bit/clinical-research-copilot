@@ -47,7 +47,7 @@ Lock down **how the data will be analyzed before analysis starts**, which reduce
 ## Quality checks
 
 - The SAP must be written **before** data are analyzed. Say so; a post hoc SAP weakens credibility.
-- Every SAP with a model must plan for **calibration and external or temporal validation**; reporting discrimination (AUC) alone is not enough.
+- Every SAP for a **prediction/ML model** must plan calibration and internal validation with optimism correction, and external or temporal validation when feasible (state why not if not); reporting discrimination (AUC) alone is not enough.
 - Check that analysis choices match the variable coding in the data dictionary.
 
 ## Conventions

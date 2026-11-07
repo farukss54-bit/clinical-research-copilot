@@ -20,7 +20,7 @@ Produce a dataset definition that is analyzable, consistent, and can be handed t
 2. For **free-text variables**, write an abstraction protocol:
    - Which note types to read (triage note, consultation note, radiology report, discharge summary).
    - An explicit, repeatable rule, for example "record the score if it is stated in the note, otherwise mark 'not documented'; do not infer".
-   - Method: (a) fully manual abstraction (gold standard, time-consuming), or (b) LLM-assisted extraction, which requires a manually validated held-out sample with independent annotation and pre-specified acceptance thresholds. If (b) is chosen, **use the `llm-extraction-validation` skill** and do not proceed without its validation plan.
+   - Method: (a) fully manual abstraction (gold standard, time-consuming), or (b) LLM-assisted extraction, which requires a manually validated held-out sample with independent annotation and pre-specified acceptance thresholds. If (b) is chosen, mark the variable "LLM extraction, pending 04a" in the table, finish the rest of the dictionary, then run the **`llm-extraction-validation` skill** on this draft. Do not finalize this file without its validation plan (`04a_llm_extraction_protocol.md`).
 3. Set a general **missing-data strategy** (complete-case, imputation, "missingness as a category") and note that the SAP will make it formal.
 4. Check that the coding suits the planned analysis: do not categorize continuous variables without a reason, and make sure coding works as model input (one-hot, ordinal, continuous) if a model is planned.
 5. **Privacy**: confirm there are no direct identifiers in the analysis dataset, that a study-specific ID is used, and that the linkage key is stored separately with restricted access. Also handle quasi-identifiers: use relative days instead of exact dates, top-code extreme ages, review rare diagnoses, and strip names from free-text fields.
@@ -31,6 +31,7 @@ Produce a dataset definition that is analyzable, consistent, and can be handed t
 
 - Full variable table with the columns above
 - Free-text abstraction protocol (rules, who abstracts, how disagreements are resolved)
+- For each LLM-extracted variable, a pointer to `04a_llm_extraction_protocol.md`
 - Missing-data strategy
 - Privacy note (identifiers removed, ID scheme, where the key is stored)
 

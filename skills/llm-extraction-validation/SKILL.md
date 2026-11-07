@@ -12,7 +12,7 @@ An optional module. Run it during the data-dictionary phase whenever a variable 
 
 ## Input
 
-`research/<slug>/02_design_feasibility.md` (which variables are free text) and `04_data_dictionary.md`.
+`research/<slug>/02_design_feasibility.md` (which variables are free text) and `04_data_dictionary.md` (a draft is enough; the dictionary is finalized after this module has produced `04a_llm_extraction_protocol.md`).
 
 ## Steps
 

@@ -40,7 +40,7 @@ For a new study, ask for a short slug (or make one from the topic) and create th
 
 1. Find where the user is. With no files, start at phase 1 and **suggest** (do not require) phase 0: recommend the `lr-ai` plugin for a real literature review, or the lightweight `quick-gap-check` skill.
 2. If the user jumps ahead, point out missing earlier files politely, then continue. The user decides; gaps are soft reminders, not gates.
-3. For each phase, load and apply the matching skill, and write its output file into `research/<slug>/`. For prediction/ML studies add the `prediction-model-design` module after design; if free-text variables will be extracted with an LLM, add `llm-extraction-validation`.
+3. For each phase, load and apply the matching skill, and write its output file into `research/<slug>/`. For prediction/ML studies add the `prediction-model-design` module after design; if free-text variables will be extracted with an LLM, add `llm-extraction-validation`: run it on the draft `04_data_dictionary.md` (variables marked "LLM extraction, pending 04a"), then finalize `04` once `04a` exists.
 4. Call a reviewer agent (with the Agent tool) for deep review rather than doing it superficially yourself, and save each report as `research/<slug>/reviews/<agent-name>.md`:
    - after a sample-size or SAP draft → `biostatistics-reviewer`
    - after the design phase and before ethics/publication → `methodology-critic`

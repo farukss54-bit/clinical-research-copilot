@@ -1,6 +1,6 @@
 # clinical-research-copilot
 
-A Claude Code plugin that guides a clinician-researcher through the design of a clinical study: **hypothesis → design and feasibility → sample size → data dictionary → statistical analysis plan → ethics application → venue and manuscript outline.** It adds optional modules for **prediction-model / ML studies** and for **LLM-assisted extraction from free-text notes**, and four reviewer agents.
+A Claude Code plugin that guides a clinician-researcher through the design of a clinical study: **hypothesis → design and feasibility → sample size → data dictionary → statistical analysis plan → ethics application → venue and manuscript outline.** It adds optional modules for **prediction-model / ML studies** and for **LLM-assisted extraction from free-text notes**, and four agents (a coordinator, two reviewers and an ethics drafter).
 
 It does not replace a biostatistician, a data-protection officer, or your ethics committee. Its outputs are drafts.
 
@@ -10,7 +10,7 @@ It does not replace a biostatistician, a data-protection officer, or your ethics
 |---|---|
 | `skills/` core | `hypothesis-formulation`, `study-design-feasibility`, `sample-size-power`, `data-dictionary-crf`, `sap-builder`, `ethics-application`, `journal-manuscript` |
 | `skills/` optional | `quick-gap-check` (lightweight phase 0), `prediction-model-design` (ML module), `llm-extraction-validation` (LLM module) |
-| `agents/` | `research-advisor` (coordinator) plus reviewers `biostatistics-reviewer`, `methodology-critic`, `ethics-drafter` |
+| `agents/` | `research-advisor` (coordinator) plus reviewers `biostatistics-reviewer` and `methodology-critic`, and `ethics-drafter` (drafts the application or reviews it as a second reader) |
 | `hooks/` | Soft reminders: project status at session start, next-step suggestion, patient-data reminder |
 
 ## Project convention
@@ -27,6 +27,7 @@ Each study lives in `research/<study-slug>/` in your working directory:
 04a_llm_extraction_protocol.md  optional   LLM-assisted extraction
 05_sap.md
 06_ethics_application.md
+06a_committee_requirements.md   optional   the committee's own form/directive requirements
 07_manuscript_plan.md
 ```
 

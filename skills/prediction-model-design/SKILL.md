@@ -8,7 +8,7 @@ description: >-
 
 An optional module on top of the core pipeline. Run it after `study-design-feasibility` and **before** `sample-size-power` finishes: for prediction models the sample-size logic lives here.
 
-> Methodology note: guideline names, versions and numerical criteria change over time and were not re-verified when this skill was written. See `references/guidelines-and-sample-size.md` for pointers, and verify the current version with a literature search before citing anything in a protocol or paper.
+> Methodology note: `references/guidelines-and-sample-size.md` holds citations verified against PubMed on the date it states, and marks what is still unverified. Guidelines and numerical criteria change over time, so check that file's date and confirm the current version before citing anything in a protocol or paper.
 
 ## Input
 
@@ -31,7 +31,7 @@ An optional module on top of the core pipeline. Run it after `study-design-feasi
    - **Clinical utility**: decision curve analysis / net benefit over plausible threshold probabilities.
    - Performance in clinically relevant subgroups (age, sex, site, period) to look for unfairness.
 7. **Imbalance and thresholds.** Be cautious with resampling to fix class imbalance: it distorts calibrated probabilities. Choose thresholds from the intended use, not from the best point on the ROC curve.
-8. **Reporting and appraisal.** Plan to report with TRIPOD+AI (BMJ 2024), which supersedes the TRIPOD 2015 checklist, and anticipate appraisal with PROBAST+AI (BMJ 2025). Citations are in `references/guidelines-and-sample-size.md`. If the model uses a large language model, check for an LLM-specific extension (unverified).
+8. **Reporting and appraisal.** Plan to report with TRIPOD+AI (BMJ 2024), which supersedes the TRIPOD 2015 checklist, and anticipate appraisal with PROBAST+AI (BMJ 2025). Citations are in `references/guidelines-and-sample-size.md`. If the model uses a large language model, also consider TRIPOD-LLM (citation and caveat in the reference file; check which modules apply).
 9. **Model use and updating.** State how the model would be implemented, monitored and updated; do not claim clinical readiness from a single-centre retrospective study.
 
 ## Output

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""SessionStart hook: eger cwd icinde research/<slug>/ projeleri varsa,
-hangi fazda olunduguna dair kisa bir hatirlatma yazdirir (yumusak, engellemeyen)."""
+"""SessionStart hook: if the working directory contains research/<slug>/ projects,
+print a short reminder of which phase each one is in (advisory, never blocks)."""
 import json
 import os
 import sys
