@@ -7,11 +7,15 @@ Last verified: 2026-11-07, against PubMed records (title, authors, journal, year
 Verified:
 - **TRIPOD+AI** (prediction models, regression or machine learning). Collins GS, Moons KGM, Dhiman P, et al. *BMJ* 2024;385:e078378. [doi:10.1136/bmj-2023-078378](https://doi.org/10.1136/bmj-2023-078378) (PMID 38626948). 27-item checklist plus a TRIPOD+AI for Abstracts checklist. The article states it supersedes the TRIPOD 2015 checklist, which should no longer be used.
 
-**Unverified** (not yet checked; stage 2 of v0.4):
-- Observational studies: STROBE; RECORD (routinely collected health data).
-- Diagnostic accuracy: STARD, and whether an AI-specific extension (STARD-AI) exists.
-- Studies using a large language model: TRIPOD-LLM (2025).
+- **TRIPOD-LLM** (studies using large language models). Gallifant J, et al. *Nat Med* 2025;31:60-69. [doi:10.1038/s41591-024-03425-5](https://doi.org/10.1038/s41591-024-03425-5) (PMID 39779929). An extension of TRIPOD+AI. Checklist of 19 main items and 50 subitems in a modular format; 14 main items and 32 subitems apply to all LLM study designs and tasks. Described as a living document, so check the project website for updates. A 2024 medRxiv preprint ([doi:10.1101/2024.07.24.24310930](https://doi.org/10.1101/2024.07.24.24310930)) exists; cite the *Nat Med* version. Whether it fits an extraction-validation study (as opposed to a prediction study) is not stated in the abstract; read the full text and choose the applicable modules.
+- **STARD 2015** (diagnostic accuracy). Bossuyt PM, et al. *BMJ* 2015;351:h5527. [doi:10.1136/bmj.h5527](https://doi.org/10.1136/bmj.h5527) (PMID 26511519). 30 essential items.
+- **STARD-AI** (diagnostic accuracy studies using AI). Sounderajah V, et al. *Nat Med* 2025;31:3283-3289. [doi:10.1038/s41591-025-03953-8](https://doi.org/10.1038/s41591-025-03953-8) (PMID 40954311). Adds 18 new or modified items to the STARD 2015 checklist (dataset practices, the AI index test and its evaluation, algorithmic bias and fairness). An Author Correction was published (*Nat Med* 2026;32:3493, [doi:10.1038/s41591-026-04570-9](https://doi.org/10.1038/s41591-026-04570-9), PMID 42443516); its content was **not checked**, so read it before citing specific item numbers.
+- **STROBE** (observational studies). von Elm E, et al. *Lancet* 2007;370:1453-1457. [doi:10.1016/S0140-6736(07)61602-X](https://doi.org/10.1016/S0140-6736(07)61602-X) (PMID 18064739). 22-item checklist: 18 items common to cohort, case-control and cross-sectional designs and 4 design-specific. The statement was published in several journals; cite the version you submit with.
+- **RECORD** (extension of STROBE for routinely collected health data). Benchimol EI, et al. *PLoS Med* 2015;12(10):e1001885. [doi:10.1371/journal.pmed.1001885](https://doi.org/10.1371/journal.pmed.1001885) (PMID 26440803). 13 additional items. Use with STROBE when the data come from records such as an EHR or administrative database.
+
+**Unverified:**
 - Whether TRIPOD+AI also supersedes the earlier TRIPOD-AI: the TRIPOD+AI abstract does not say so; check the full text.
+- Whether a RECORD update has been published since 2015, and whether STROBE has a newer version: only the original papers were searched.
 
 ## Risk-of-bias and applicability appraisal
 

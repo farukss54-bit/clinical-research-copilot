@@ -25,9 +25,9 @@ Lock down **how the data will be analyzed before analysis starts**, which reduce
 5. **Missing data**: make the data-dictionary strategy formal (for example multiple imputation: number of imputations, variables included, assumptions about the missingness mechanism) and plan a sensitivity analysis.
 6. **Reporting guideline**:
    - Observational cohort / case-control / cross-sectional → STROBE (and its extension for routinely collected health data, if the data come from records)
-   - Diagnostic accuracy → STARD
+   - Diagnostic accuracy → STARD 2015; STARD-AI when the index test is an AI system
    - Prediction model development/validation, including ML → TRIPOD+AI, with PROBAST+AI as the appraisal tool (verified citations in `../prediction-model-design/references/guidelines-and-sample-size.md`)
-   - Studies that use an LLM → check whether an LLM-specific reporting extension applies (see `llm-extraction-validation`)
+   - Studies that use an LLM → TRIPOD-LLM (see `llm-extraction-validation` for which parts apply)
    List the main checklist headings and confirm the study will be able to report them. Confirm the current version of the guideline before citing it.
 7. **Software**: name the language and packages (R/Python), matched to the user's stated statistical experience. Prefer a small, well-known toolset over an elaborate one.
 8. Recommend a `biostatistics-reviewer` pass.

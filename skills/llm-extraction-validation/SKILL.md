@@ -8,7 +8,7 @@ description: >-
 
 An optional module. Run it during the data-dictionary phase whenever a variable will be taken from free-text notes with an LLM.
 
-> Methodology note: reporting guidance for LLM studies is evolving and was not re-verified when this skill was written. See `../prediction-model-design/references/guidelines-and-sample-size.md` for pointers and verify the current version before citing.
+> Methodology note: TRIPOD-LLM (Gallifant et al., Nat Med 2025) is the reporting guideline for studies using large language models; the citation and a caveat are in `../prediction-model-design/references/guidelines-and-sample-size.md`. Its abstract does not say whether it covers extraction-validation studies, so read the modules and apply those that fit. It is a living document: check for updates before submission.
 
 ## Input
 
