@@ -9,6 +9,8 @@ Usage:
   python tests/run_behavior_probes.py p4            # a two-study protocol triggers a split question
   python tests/run_behavior_probes.py p2 --fixture research/<slug>
                                                    # a decision is logged and propagated in phase order
+  python tests/run_behavior_probes.py p6 --fixture research/<slug>
+                                                   # a reviewer report is saved verbatim with an Advisor response
   options: --model sonnet --budget 0.6 --keep (keep the temp folder)
 
 Checks are on tool use and files (deterministic). The assistant's text is printed for you to read,
@@ -17,6 +19,7 @@ because wording is not asserted. Needs the `claude` CLI on PATH.
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -35,6 +38,8 @@ PROMPTS = {
           "dosyalarında BT istem oranını önce-sonra tarayacağım. Bunu baştan sona tasarlayalım.",
     "p2": "Karar verdim: merkezdeki uygun ve istekli asistan sayısı 75 değil, 60. Başka hiçbir şey değişmedi. "
           "Bunu çalışmaya işle.",
+    "p6": "02_design_feasibility.md hazır. Tasarımı methodology-critic ile eleştirel biçimde incelet ve raporu "
+          "çalışmaya kaydet. Çalışma dosyalarını (00-07) değiştirme.",
 }
 SEARCH_LIKE = ("WebSearch", "WebFetch", "Skill", "Agent")
 
@@ -47,7 +52,7 @@ def run_claude(prompt, cwd, model, budget, edits):
         cmd += ["--permission-mode", "acceptEdits"]
     proc = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace",
                           stdin=subprocess.DEVNULL, timeout=900)
-    calls, texts, cost = [], [], None
+    calls, texts, cost, results = [], [], None, {}
     for line in proc.stdout.splitlines():
         if not line.startswith("{"):
             continue
@@ -58,14 +63,26 @@ def run_claude(prompt, cwd, model, budget, edits):
         if ev.get("type") == "assistant":
             for b in ev.get("message", {}).get("content", []):
                 if b.get("type") == "tool_use":
-                    calls.append((b.get("name", ""), b.get("input", {})))
+                    calls.append((b.get("name", ""), b.get("input", {}), b.get("id")))
                 elif b.get("type") == "text" and b.get("text", "").strip():
                     texts.append(b["text"].strip())
+        elif ev.get("type") == "user":
+            content = ev.get("message", {}).get("content", [])
+            for b in content if isinstance(content, list) else []:
+                if b.get("type") == "tool_result":
+                    c = b.get("content")
+                    if isinstance(c, list):
+                        c = "\n".join(x.get("text", "") for x in c if isinstance(x, dict))
+                    results[b.get("tool_use_id")] = c or ""
         elif ev.get("type") == "result":
             cost = ev.get("total_cost_usd")
             if ev.get("result"):
                 texts.append(ev["result"].strip())
-    return calls, texts, cost
+    return calls, texts, cost, results
+
+
+def _norm(s):
+    return " ".join(str(s).split())
 
 
 def verdict(ok, label, detail=""):
@@ -85,18 +102,19 @@ def main():
     ap.add_argument("--budget", type=float, default=None)
     ap.add_argument("--keep", action="store_true")
     a = ap.parse_args()
-    if a.probe == "p2" and not a.fixture:
-        sys.exit("p2 needs --fixture research/<slug>")
-    budget = a.budget or (1.5 if a.probe == "p2" else 0.6)
+    if a.probe in ("p2", "p6") and not a.fixture:
+        sys.exit(f"{a.probe} needs --fixture research/<slug>")
+    budget = a.budget or (1.5 if a.probe in ("p2", "p6") else 0.6)
 
     work = tempfile.mkdtemp(prefix="probe-")
     study = None
-    if a.probe == "p2":
+    if a.probe in ("p2", "p6"):
         study = os.path.join(work, "research", os.path.basename(os.path.normpath(a.fixture)))
-        shutil.copytree(a.fixture, study, ignore=shutil.ignore_patterns("lit-review-*", "*.py", "__pycache__"))
+        skip = ["lit-review-*", "*.py", "__pycache__"] + (["reviews"] if a.probe == "p6" else [])
+        shutil.copytree(a.fixture, study, ignore=shutil.ignore_patterns(*skip))
         before = {n: os.path.getmtime(os.path.join(study, n)) for n in os.listdir(study) if n.endswith(".md")}
     t0 = time.time()
-    calls, texts, cost = run_claude(PROMPTS[a.probe], work, a.model, budget, edits=a.probe == "p2")
+    calls, texts, cost, results = run_claude(PROMPTS[a.probe], work, a.model, budget, edits=a.probe in ("p2", "p6"))
     names = [c[0] for c in calls]
     print(f"probe {a.probe}: {len(calls)} tool calls, cost ${cost}, {time.time() - t0:.0f}s, folder {work}")
     ok = True
@@ -106,6 +124,28 @@ def main():
         wrote = [n for n in names if n in ("Write", "Edit")]
         if a.probe == "p4":
             ok &= verdict(not wrote, "no phase file written before the scope question is answered", ", ".join(wrote))
+    elif a.probe == "p6":
+        import check_study_folder as csf  # noqa: E402
+        agent_calls = [c for c in calls if c[0] in ("Agent", "Task") and "methodology-critic" in json.dumps(c[1])]
+        ok &= verdict(bool(agent_calls), "the methodology-critic agent was called")
+        report = os.path.join(study, "reviews", "methodology-critic.md")
+        have = os.path.isfile(report)
+        ok &= verdict(have, "reviews/methodology-critic.md was written")
+        text = open(report, encoding="utf-8").read() if have else ""
+        ok &= verdict(bool(re.search(r"(?im)^#{1,3}\s*advisor response", text)), "report has an 'Advisor response' section")
+        ids = set(re.findall(r"\bM\d{1,2}\b", text))
+        ok &= verdict(len(ids) >= 3, "findings carry IDs (M1, M2, ...)", f"{len(ids)} found")
+        ok &= verdict(bool(re.search(r"\b(Critical|High|Medium|Low)\b", text)), "findings carry a severity")
+        if agent_calls and agent_calls[0][2] in results and len(_norm(results[agent_calls[0][2]])) > 400:
+            res = _norm(results[agent_calls[0][2]])
+            mid = res[len(res) // 2: len(res) // 2 + 150]
+            ok &= verdict(mid in _norm(text), "the reviewer's report was saved verbatim (middle slice found in the file)")
+        else:
+            print("  info  verbatim check skipped (no usable reviewer result captured)")
+        untouched = [n for n in before if n[:2].isdigit() and os.path.getmtime(os.path.join(study, n)) > before[n] + 1]
+        ok &= verdict(not untouched, "phase files 00-07 were not modified", ", ".join(untouched))
+        own = [f for f in csf.check(study) if f[1] == "reviews/methodology-critic.md"]
+        ok &= verdict(not own, "no checker finding for the report file", "; ".join(f[2] for f in own))
     else:
         from phase_state import PHASES  # noqa: E402
         ok &= verdict(os.path.isfile(os.path.join(study, "decisions.md")), "decisions.md exists")

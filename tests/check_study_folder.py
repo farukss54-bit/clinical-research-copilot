@@ -36,6 +36,11 @@ HISTORY = re.compile(
     r"|\badditions after\b)"
 )
 PLACEHOLDER = re.compile(r"\b(TBD|TODO|FIXME)\b|to be clarified")
+# Figures a writer marked as not yet (re)computed; harmless in a draft, but must be resolved before submission.
+OPEN_MARKER = re.compile(
+    r"(?i)yeniden hesaplanacak|to be (re-?computed|re-?calculated)|not yet (re-?computed|re-?calculated)"
+    r"|pending (re-?computation|re-?calculation)|needs? (to be )?re-?calculat"
+)
 REFUTATION = re.compile(r"(?i)refut|falsif|would make (you|us|the \w+) (reject|abandon|give up)")
 SCOPE = re.compile(r"(?i)not investigated|out of scope|scope boundar|does not investigate")
 
@@ -82,6 +87,9 @@ def check(study_dir):
         for m in PLACEHOLDER.finditer(text):
             out.append(("WARN", name, f"placeholder '{m.group(0)}'"))
             break
+        open_markers = OPEN_MARKER.findall(text)
+        if open_markers:
+            out.append(("WARN", name, f"{len(open_markers)} open 'to be recomputed' marker(s): resolve before submission"))
 
     hyp = _read(os.path.join(study_dir, "01_hypothesis.md"))
     if hyp:

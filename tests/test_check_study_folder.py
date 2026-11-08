@@ -68,6 +68,14 @@ class Checker(unittest.TestCase):
             self.assertTrue(any("Correction after" in m for m in w))
             self.assertTrue(any("placeholder 'TBD'" in m for m in w))
 
+    def test_open_recompute_markers_are_flagged(self):
+        with tempfile.TemporaryDirectory() as d:
+            write(d, "01_hypothesis.md", GOOD_HYP)
+            write(d, "decisions.md")
+            write(d, "06_ethics_application.md", "Güç değerleri yeniden hesaplanacak.\nPower: to be recomputed for N = 60.\n")
+            w = [m for n, m in msgs(csf.check(d), "WARN") if n == "06_ethics_application.md"]
+            self.assertEqual(w, ["2 open 'to be recomputed' marker(s): resolve before submission"])
+
     def test_hypothesis_without_refutation_or_scope(self):
         with tempfile.TemporaryDirectory() as d:
             write(d, "01_hypothesis.md", "# 01\n\nH1: A beats B.\n")
