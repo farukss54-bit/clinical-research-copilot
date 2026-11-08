@@ -5,3 +5,5 @@ Thumbs.db
 .claude/settings.local.json
 # Study files are written to research/<slug>/ in the user's working directory; never publish them.
 research/
+# Local maintainer notes, not part of the published plugin.
+docs/publishing-to-the-directory.md
