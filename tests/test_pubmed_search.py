@@ -88,5 +88,47 @@ class AddDryRun(unittest.TestCase):
             self.assertIn("no DOI, not added: 1", buf.getvalue())
 
 
+class EsearchSampleAndAdd(unittest.TestCase):
+    def test_parse_esearch_keeps_translation_and_warnings(self):
+        c, ids, tr, notes = ps.parse_esearch({
+            "count": "3412", "idlist": ["1", "2"], "querytranslation": '"status epilepticus"[MeSH Terms]',
+            "warninglist": {"phrasesnotfound": ["foo bar"]}})
+        self.assertEqual((c, ids), (3412, ["1", "2"]))
+        self.assertIn("MeSH", tr)
+        self.assertEqual(notes, {"warninglist": {"phrasesnotfound": ["foo bar"]}})
+        with self.assertRaises(SystemExit):
+            ps.parse_esearch({"ERROR": "Invalid query"})
+
+    def test_pick_sample_is_spread_over_the_whole_list(self):
+        self.assertEqual(ps.pick_sample(list(range(100)), 5), [0, 20, 40, 60, 80])
+        self.assertEqual(ps.pick_sample([1, 2], 8), [1, 2])
+        self.assertEqual(ps.pick_sample([], 3), [])
+
+    def test_retracted_papers_are_excluded_by_default(self):
+        self.assertIn('"Retracted Publication"[pt]', ps.build_term("x"))
+        self.assertNotIn("Retracted", ps.build_term("x", keep_all_types=True))
+
+    def test_add_sums_lr_output_and_writes_log(self):
+        with tempfile.TemporaryDirectory() as d:
+            run = os.path.join(d, "run")
+            os.makedirs(run)
+            stub = os.path.join(d, "stub_lr.py")
+            with open(stub, "w", encoding="utf-8") as f:
+                f.write('print("Added 2 papers (1 new).")\n')
+            rec = os.path.join(d, "records.jsonl")
+            with open(rec, "w", encoding="utf-8") as f:
+                for doi in ("10.1000/a", "10.1000/b", "10.1000/c"):
+                    f.write(json.dumps({"doi": doi}) + "\n")
+            import contextlib
+            import io
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                ps.main(["add", "--records", rec, "--run", run, "--lr-script", stub, "--chunk", "2"])
+            self.assertIn("added 2 new papers", buf.getvalue())
+            with open(os.path.join(d, "add-log.json"), encoding="utf-8") as f:
+                log = json.load(f)
+            self.assertEqual((log["attempted"], log["resolved"], log["added_new"]), (3, 4, 2))
+
+
 if __name__ == "__main__":
     unittest.main()

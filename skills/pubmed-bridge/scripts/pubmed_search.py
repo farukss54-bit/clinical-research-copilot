@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """PubMed search for the lr-ai bridge (Python standard library only).
 
-Two sub-commands:
+Sub-commands (search, add; sample prints a fair look at the titles):
 
   search  Run one or more PubMed queries through NCBI E-utilities, de-duplicate by PMID and
           write the records to <out>/records.jsonl plus <out>/queries.json and summary.json.
@@ -32,7 +32,8 @@ EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
 TOOL = "clinical-research-copilot"
 SUMMARY_CHUNK = 150
 # Publication types dropped by default (mirrors lr-ai's exclude_types for opinion-type records).
-DEFAULT_EXCLUDED_TYPES = ["Editorial", "Letter", "Comment", "News", "Published Erratum", "Retraction of Publication"]
+# Each name was checked against PubMed ("Retraction of Publication"[pt] is not recognised, so it is not listed).
+DEFAULT_EXCLUDED_TYPES = ["Editorial", "Letter", "Comment", "News", "Published Erratum", "Retracted Publication"]
 
 _last_call = [0.0]
 
@@ -81,14 +82,29 @@ def build_term(query, lang="en", keep_all_types=False):
     return term
 
 
+def parse_esearch(data):
+    """esearchresult dict -> (matches, pmids, how PubMed read the query, warnings and errors it returned)."""
+    if data.get("ERROR"):
+        raise SystemExit(f"PubMed rejected the query: {data['ERROR']}")
+    notes = {k: data[k] for k in ("warninglist", "errorlist") if data.get(k)}
+    return int(data.get("count", 0)), list(data.get("idlist", [])), data.get("querytranslation", ""), notes
+
+
 def esearch(term, limit, year_from=None, year_to=None):
     params = {"db": "pubmed", "term": term, "retmax": limit, "sort": "relevance"}
     if year_from or year_to:
         params.update(datetype="pdat", mindate=str(year_from or 1900), maxdate=str(year_to or 3000))
-    data = _get_json("esearch.fcgi", params).get("esearchresult", {})
-    if data.get("ERROR"):
-        raise SystemExit(f"PubMed rejected the query: {data['ERROR']}")
-    return int(data.get("count", 0)), list(data.get("idlist", []))
+    return parse_esearch(_get_json("esearch.fcgi", params).get("esearchresult", {}))
+
+
+def pick_sample(records, n):
+    """n records spread evenly over the list (not just its first entries)."""
+    if n <= 0 or not records:
+        return []
+    if n >= len(records):
+        return list(records)
+    step = len(records) / n
+    return [records[int(i * step)] for i in range(n)]
 
 
 _DOI_RE = re.compile(r"10\.\d{4,9}/\S+", re.I)
@@ -169,8 +185,9 @@ def cmd_search(args):
     log, by_pmid = [], {}
     for n, query in enumerate(queries, 1):
         term = build_term(query, args.lang, args.keep_all_types)
-        total, ids = esearch(term, args.limit, args.year_from, args.year_to)
-        log.append({"n": n, "query": query, "term": term, "matches": total, "fetched": len(ids)})
+        total, ids, translation, notes = esearch(term, args.limit, args.year_from, args.year_to)
+        log.append({"n": n, "query": query, "term": term, "pubmed_translation": translation, "pubmed_notes": notes,
+                    "matches": total, "fetched": len(ids), "truncated": total > len(ids)})
         for pmid in ids:
             by_pmid.setdefault(pmid, []).append(n)
 
@@ -194,7 +211,11 @@ def cmd_search(args):
         "without_doi": len(records) - len(with_doi),
         "already_in_run": sum(1 for r in with_doi if r["in_run"]),
         "new_with_doi": sum(1 for r in with_doi if not r["in_run"]),
-        "per_query": [{"n": e["n"], "matches": e["matches"], "fetched": e["fetched"]} for e in log],
+        "per_query": [{"n": e["n"], "matches": e["matches"], "fetched": e["fetched"], "truncated": e["truncated"],
+                       "pubmed_notes": bool(e["pubmed_notes"])} for e in log],
+        "truncated_queries": [e["n"] for e in log if e["truncated"]],
+        "zero_hit_queries": [e["n"] for e in log if e["matches"] == 0],
+        "queries_with_pubmed_warnings": [e["n"] for e in log if e["pubmed_notes"]],
     }
     with open(os.path.join(args.out, "summary.json"), "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2)
@@ -221,19 +242,36 @@ def cmd_add(args):
     if args.dry_run or not todo:
         return
     env = dict(os.environ, PYTHONUTF8="1", PYTHONIOENCODING="utf-8")
-    added_lines = []
+    added_lines, resolved, new = [], 0, 0
     for chunk in chunked(todo, args.chunk):
         proc = subprocess.run([sys.executable, args.lr_script, "add", "--run", args.run] + chunk,
                               capture_output=True, text=True, encoding="utf-8", errors="replace", env=env)
         out = (proc.stdout or "").strip().splitlines()
         added_lines.extend(out[:1] + [ln for ln in out[1:] if "not found" in ln or "failed" in ln][:5])
+        for ln in out:
+            m = re.search(r"Added (\d+) papers? \((\d+) new\)", ln)
+            if m:
+                resolved += int(m.group(1))
+                new += int(m.group(2))
         if proc.returncode != 0:
             print((proc.stderr or "").strip()[-400:])
             raise SystemExit(f"lr.py add failed with exit code {proc.returncode}.")
     for ln in added_lines:
         print(ln)
+    print(f"Attempted {len(todo)} DOIs; lr-ai resolved {resolved} and added {new} new papers to the run.")
     with open(os.path.join(os.path.dirname(os.path.abspath(args.records)), "add-log.json"), "w", encoding="utf-8") as f:
-        json.dump({"date": time.strftime("%Y-%m-%d"), "attempted": len(todo), "lr_output": added_lines}, f, indent=2)
+        json.dump({"date": time.strftime("%Y-%m-%d"), "attempted": len(todo), "resolved": resolved,
+                   "added_new": new, "lr_output": added_lines}, f, indent=2)
+
+
+def cmd_sample(args):
+    records = []
+    with open(args.records, encoding="utf-8") as f:
+        for line in f:
+            if line.strip():
+                records.append(json.loads(line))
+    for r in pick_sample(records, args.n):
+        print(f"{r.get('pmid')}  {r.get('year')}  {(r.get('title') or '')[:110]}")
 
 
 def main(argv=None):
@@ -261,6 +299,10 @@ def main(argv=None):
     a.add_argument("--chunk", type=int, default=40, help="DOIs per lr.py call")
     a.add_argument("--dry-run", action="store_true")
     a.set_defaults(func=cmd_add)
+    m = sub.add_parser("sample", help="print titles of records spread evenly over the file (a fair look)")
+    m.add_argument("--records", required=True)
+    m.add_argument("--n", type=int, default=8)
+    m.set_defaults(func=cmd_sample)
     args = ap.parse_args(argv)
     args.func(args)
 

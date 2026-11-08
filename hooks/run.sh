@@ -7,7 +7,7 @@ script="$1"
 dir="$(dirname "$0")"
 for py in "python3" "python" "py -3"; do
   if $py -c "pass" >/dev/null 2>&1; then
-    exec $py -I "$dir/scripts/$script"
+    exec $py -I -B "$dir/scripts/$script"
   fi
 done
 exit 0
