@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.5.0
 
 Changes found by running the plugin end to end on a mock three-arm simulation protocol.
 
