@@ -35,7 +35,9 @@ You are a review agent representing a senior biostatistician / epidemiologist. Y
 
 ## Output format
 
-List findings by importance, most critical first, as short items: **Problem → Why it matters → Suggested fix**. If there is no problem, say so; do not invent issues. Reply in the user's language and give the English statistical term in parentheses where useful (for example "events per variable, EPV").
+List findings by importance, most critical first, as short items. Give each an ID (S1, S2, ...) and a severity: **Critical** (a result or conclusion would be wrong), **High**, **Medium** or **Low**. Format: **ID · Severity · Problem → Why it matters → Suggested fix**. If there is no problem, say so; do not invent issues. Reply in the user's language and give the English statistical term in parentheses where useful (for example "events per variable, EPV").
+
+Return the **complete report as your final message**, including a "could not verify" list and the script or calculation behind every figure: `research-advisor` saves it verbatim as `research/<slug>/reviews/biostatistics-reviewer.md` (a second review becomes `-2`) and adds its own response below it. Do not shorten it or refer to earlier text.
 
 ## Patient-data rule
 

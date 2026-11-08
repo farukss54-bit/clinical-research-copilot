@@ -9,7 +9,7 @@ It does not replace a biostatistician, a data-protection officer, or your ethics
 | Folder | Contents |
 |---|---|
 | `skills/` core | `hypothesis-formulation`, `study-design-feasibility`, `sample-size-power`, `data-dictionary-crf`, `sap-builder`, `ethics-application`, `journal-manuscript` |
-| `skills/` optional | `quick-gap-check` (lightweight phase 0), `prediction-model-design` (ML module), `llm-extraction-validation` (LLM module) |
+| `skills/` optional | `quick-gap-check` (lightweight phase 0), `pubmed-bridge` (adds PubMed to an lr-ai review), `prediction-model-design` (ML module), `llm-extraction-validation` (LLM module) |
 | `agents/` | `research-advisor` (coordinator) plus reviewers `biostatistics-reviewer` and `methodology-critic`, and `ethics-drafter` (drafts the application or reviews it as a second reader) |
 | `hooks/` | Soft reminders: project status at session start, next-step suggestion, patient-data reminder |
 
@@ -18,6 +18,7 @@ It does not replace a biostatistician, a data-protection officer, or your ethics
 Each study lives in `research/<study-slug>/` in your working directory:
 
 ```
+decisions.md                               append-only log of decisions, skipped steps and overrides
 00_gap_analysis.md              optional   literature / gap check
 01_hypothesis.md
 02_design_feasibility.md
@@ -29,13 +30,16 @@ Each study lives in `research/<study-slug>/` in your working directory:
 06_ethics_application.md
 06a_committee_requirements.md   optional   the committee's own form/directive requirements
 07_manuscript_plan.md
+reviews/<agent-name>.md                    reviewer reports, kept verbatim, with the advisor's response
 ```
 
-Several studies can run in parallel, each in its own folder. The advisor works out the current phase from which files exist.
+Several studies can run in parallel, each in its own folder. The advisor works out the current phase from which files exist. Phase files show the current state only; the history of decisions (what changed, why, which files were updated, what was skipped) is in `decisions.md`.
 
 ### Literature review (phase 0)
 
 Phase 0 is optional. For a real literature review (thesis, grant, systematic or scoping review) use a dedicated tool: the **lr-ai** plugin is recommended, and other literature connectors (PubMed, Consensus, Elicit) work too. Save the result as `00_gap_analysis.md`. If you only need a quick originality check, the lightweight `quick-gap-check` skill does that.
+
+lr-ai searches OpenAlex, Semantic Scholar and arXiv, not PubMed. For a clinical question, run the `pubmed-bridge` skill on the same run: it searches PubMed (MeSH-aware) through NCBI E-utilities, drops what the run already has, and adds the new DOIs with `lr.py add`, so lr-ai's filtering and screening treat them like any other paper. It does not modify lr-ai, needs only the Python standard library, and uses almost no model tokens for the search itself. An NCBI API key is optional (`NCBI_API_KEY`, 3 → 10 requests per second). Records without a DOI are not added automatically, and lr-ai labels bridged papers `manual`, so count them as a separate source in a PRISMA-style flow. Offline tests: `python -m unittest discover -s tests`.
 
 ## Install
 
@@ -76,8 +80,8 @@ Skills use connected literature and data connectors (PubMed, Consensus, Elicit, 
 
 All hooks are soft: they never block an action; they only add information for Claude.
 
-- `SessionStart`: summarizes the phase of each project under `research/`.
-- `PostToolUse` (Write/Edit): after a phase file is written, suggests the next step; if the path or file name suggests patient-level data (tokens such as `hasta`, `patient`, `hbys`, `ehr`, `vaka` plus a data extension such as csv/xlsx/json), adds a privacy reminder. It only sees files Claude writes; data created via `Bash` or already on disk is not covered.
+- `SessionStart`: summarizes the phase of each project under `research/`, and lists phase files that **may be out of date** because a file they were built from was modified later. The check compares file modification times, so copying or cloud sync can cause a false alarm; it is silent when nothing is flagged.
+- `PostToolUse` (Write/Edit): after a phase file is written, suggests the next step and lists the downstream files that were built from it and are now older (they may need updating); if the path or file name suggests patient-level data (tokens such as `hasta`, `patient`, `hbys`, `ehr`, `vaka` plus a data extension such as csv/xlsx/json), adds a privacy reminder. It only sees files Claude writes; data created via `Bash` or already on disk is not covered.
 
 Hooks start through `hooks/run.sh`, which uses the first working interpreter among `python3`, `python` and `py -3` (on Windows `python3` is often a Microsoft Store stub, so each candidate is probed). If none works, the hook is skipped silently. On Windows, `sh` requires Git for Windows (Git Bash). There are no dependencies beyond the Python standard library.
 

@@ -12,17 +12,19 @@ Give the user a fast, honest answer to "has this been done, and where is the roo
 
 This is deliberately not a systematic review. If the user needs a defensible literature base (grant, thesis, systematic/scoping review), recommend a dedicated tool instead.
 
-## Step 1 — Offer the better tools first
+## Step 1 — Ask which route the user wants (do not just mention it, and do not search yet)
 
-Check which of these are available in this session and mention the relevant ones in one or two sentences:
+If `research-advisor` already asked and the user chose the light check, or the user invoked this skill directly for a quick check, skip to Step 2. Otherwise check which of these are available in this session and **ask the user to choose** (a multiple-choice question, recommended option first, one line per option, plain clinical language):
 
-- The **lr-ai** plugin (`lr-ai:lit-review`): full seed search, database search, snowballing, screening and categorization. Best for a real literature review.
+- The **lr-ai** plugin (`lr-ai:lit-review`): full seed search, database search, snowballing, screening and categorization. Best for a real literature review (thesis, grant, registration). Its sources are OpenAlex, Semantic Scholar and arXiv, not PubMed: after it runs, offer the `pubmed-bridge` skill of this plugin to add a MeSH-aware PubMed search to the same run.
 - A **clinical-evidence** style skill, if installed: retrieves referenced answers to focused clinical questions.
 - Literature connectors (PubMed, Consensus, Elicit, ClinicalTrials.gov, bioRxiv), if connected.
+- The **light check** below: fast, not systematic.
+- **Skip phase 0** for now (note the reason in `decisions.md`).
 
-If the user wants one of these, hand over to it and ask them to save the result (or a short summary) as `research/<slug>/00_gap_analysis.md`. Then stop; do not duplicate its work.
+Wait for the answer before running any search. If the user picks a dedicated tool, hand over to it and ask them to save the result (or a short summary) as `research/<slug>/00_gap_analysis.md`. Then stop; do not duplicate its work.
 
-## Step 2 — Light fallback (only if the user wants it, or nothing else is available)
+## Step 2 — Light check (only after the user chose it, or when nothing else is available)
 
 1. Ask for the topic, population/setting, and the type of study they have in mind (one short question, not a questionnaire).
 2. Search at least two sources (for example PubMed plus a second source via a connector or WebSearch). Start broad, then narrow; overly restrictive AND-chains return nothing. Never search with identifiable patient data.
@@ -49,4 +51,5 @@ Write `research/<slug>/00_gap_analysis.md` containing:
 
 - `<slug>` is the study's short folder name. If none exists, ask the user for one (or derive a short kebab-case name from the topic) and create `research/<slug>/`.
 - If an input file listed above is missing, say so, continue with what the user tells you, and mark the gap as "not specified" in the output. Do not invent data, numbers or sources.
+- Show the current state only. Change history ("updated after review", "second round") does not belong in this file; record decisions in `research/<slug>/decisions.md` (create it if missing) and note which later phase files the change affects.
 - Never put identifiable patient data into this session or into any search.

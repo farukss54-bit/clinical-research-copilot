@@ -12,6 +12,9 @@ import os
 import re
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from phase_state import stale_files  # noqa: E402
+
 NEXT_STEP = {
     "00_gap_analysis.md": "Next: run hypothesis-formulation to turn the best gap into a PICO question.",
     "01_hypothesis.md": "Next: run study-design-feasibility to check design and data feasibility.",
@@ -64,6 +67,17 @@ def main():
     messages = []
     if fname in NEXT_STEP and "research" in norm.split("/"):
         messages.append(f"[clinical-research-copilot] {fname} updated. {NEXT_STEP[fname]}")
+        # Files built from the one just written, but older than it, may now be out of date.
+        study_dir = os.path.dirname(file_path)
+        downstream = sorted(f for f, newer in stale_files(study_dir).items() if fname in newer)
+        if downstream:
+            messages.append(
+                f"[clinical-research-copilot] These files were built from {fname} and may now be out of "
+                f"date: {', '.join(downstream)}. Check each one against the change and update it, or add "
+                f"a line 'Checked against {fname} on <date>: no change needed' (saving it clears the "
+                f"flag). Log the decision in research/<slug>/decisions.md. Absence of this warning does "
+                f"not prove a file is current."
+            )
 
     ext = os.path.splitext(fname)[1].lower()
     if ext in DATA_EXT and (_tokens(norm) & SENSITIVE_TOKENS):

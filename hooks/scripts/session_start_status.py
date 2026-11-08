@@ -1,26 +1,13 @@
 #!/usr/bin/env python3
 """SessionStart hook: if the working directory contains research/<slug>/ projects,
-print a short reminder of which phase each one is in (advisory, never blocks)."""
+print a short reminder of which phase each one is in, and which phase files may be
+out of date because a file they were built from changed later (advisory, never blocks)."""
 import json
 import os
 import sys
 
-# Required phases. 00 (gap check) and the 02a/04a module files are optional and not counted.
-PHASES = [
-    ("01_hypothesis.md", "hypothesis / research question"),
-    ("02_design_feasibility.md", "design and feasibility"),
-    ("03_sample_size.md", "sample size / power"),
-    ("04_data_dictionary.md", "data dictionary / CRF"),
-    ("05_sap.md", "statistical analysis plan"),
-    ("06_ethics_application.md", "ethics application"),
-    ("07_manuscript_plan.md", "manuscript / venue plan"),
-]
-OPTIONAL = [
-    ("00_gap_analysis.md", "gap check"),
-    ("02a_prediction_model_plan.md", "prediction-model plan"),
-    ("04a_llm_extraction_protocol.md", "LLM extraction protocol"),
-    ("06a_committee_requirements.md", "committee requirements"),
-]
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from phase_state import OPTIONAL, PHASES, stale_files  # noqa: E402
 
 
 def main():
@@ -49,10 +36,19 @@ def main():
         current = missing[0] if missing else "all phases have a file"
         extra_txt = f" (optional present: {', '.join(extras)})" if extras else ""
         lines.append(f"- {slug}: {len(done)}/{len(PHASES)} phases done. Next: {current}{extra_txt}")
+        # Silent when nothing is stale: a quiet session start is the correct output.
+        for fname, newer in sorted(stale_files(study_dir).items()):
+            lines.append(f"    may be out of date: {fname} (older than {', '.join(newer)})")
 
     if lines:
         print("[clinical-research-copilot] Research projects in progress:")
         print("\n".join(lines))
+        if any(line.startswith("    may be out of date") for line in lines):
+            print(
+                "Check each flagged file against the newer file(s) and update it, or add a line "
+                "'Checked against <file> on <date>: no change needed' (saving it clears the flag). "
+                "Record the decision in research/<slug>/decisions.md."
+            )
 
 
 if __name__ == "__main__":

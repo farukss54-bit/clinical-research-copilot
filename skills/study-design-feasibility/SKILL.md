@@ -27,6 +27,7 @@ Turn the abstract question into a plan that can really be executed. A feasibilit
    - **Single centre or multicentre**? If multicentre, are data definitions harmonized?
    - Does the **prediction time point** exist in the data (all predictors available before the moment the model would be used)?
 4. If you find a serious blocker (for example the key outcome is not recorded), say so plainly and suggest going back to the hypothesis phase. Going back and forth is normal and cheap at this stage.
+5. **Scope check**: does the material describe more than one study (for example a trial and a later real-world audit, or development and validation of a model)? If so, say it here and ask whether to split them into separate `research/<slug>/` folders before sample size, ethics and SAP are written for a mixed protocol.
 
 ## Output
 
@@ -43,9 +44,11 @@ Turn the abstract question into a plan that can really be executed. A feasibilit
 
 - Do not assume "this data probably exists". Ask. If the user does not know, record "unknown — pilot review needed".
 - Keep the design consistent with the outcome and time window in the hypothesis.
+- Self-review before saving: scan for placeholders, terms that could mean two things, and numbers with no source and no "assumed" label.
 
 ## Conventions
 
 - `<slug>` is the study's short folder name. If none exists, ask the user for one (or derive a short kebab-case name from the topic) and create `research/<slug>/`.
 - If an input file listed above is missing, say so, continue with what the user tells you, and mark the gap as "not specified" in the output. Do not invent data, numbers or sources.
+- Show the current state only. Change history ("updated after review", "second round") does not belong in this file; record decisions in `research/<slug>/decisions.md` (create it if missing) and note which later phase files the change affects.
 - Never put identifiable patient data into this session or into any search.
