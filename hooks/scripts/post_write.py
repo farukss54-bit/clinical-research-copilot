@@ -73,7 +73,8 @@ def main():
         if downstream:
             messages.append(
                 f"[clinical-research-copilot] These files were built from {fname} and may now be out of "
-                f"date: {', '.join(downstream)}. Check each one against the change and update it, or add "
+                f"date: {', '.join(downstream)}. Check each one against the change, in phase order (lowest "
+                f"number first), and update it, or add "
                 f"a line 'Checked against {fname} on <date>: no change needed' (saving it clears the "
                 f"flag). Log the decision in research/<slug>/decisions.md. Absence of this warning does "
                 f"not prove a file is current."
