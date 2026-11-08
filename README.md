@@ -85,9 +85,20 @@ All hooks are soft: they never block an action; they only add information for Cl
 
 Hooks start through `hooks/run.sh`, which uses the first working interpreter among `python3`, `python` and `py -3` (on Windows `python3` is often a Microsoft Store stub, so each candidate is probed). If none works, the hook is skipped silently. On Windows, `sh` requires Git for Windows (Git Bash). There are no dependencies beyond the Python standard library.
 
+## Tests
+
+Free, offline, no model calls (Python standard library only):
+
+```
+python -m unittest discover -s tests
+python tests/check_study_folder.py research/<slug>     # checks a study folder against this plugin's conventions
+```
+
+`tests/run_behavior_probes.py` runs short headless sessions of the advisor to check its behaviour (phase 0 is asked, a two-study protocol is split, a decision is logged and propagated in phase order, a reviewer report is saved verbatim). **It calls the model and costs money** (a few tenths of a dollar per probe, capped by `--max-budget-usd`); see its docstring before running it.
+
 ## Privacy and limits
 
-- This plugin does not upload anything itself and only produces local markdown documents. **But everything Claude reads and everything you type is sent to the model provider.** Do not have Claude read patient-level data unless your institution has approved it and the data are de-identified. The hooks only remind; they cannot enforce this.
+- This plugin only produces local markdown documents, with one exception you start yourself: the `pubmed-bridge` script sends your PubMed search queries (generic concepts only; never patient data) to NCBI's E-utilities, together with `NCBI_EMAIL` and `NCBI_API_KEY` if you have set them. It sends nothing else. **But everything Claude reads and everything you type is sent to the model provider.** Do not have Claude read patient-level data unless your institution has approved it and the data are de-identified. The hooks only remind; they cannot enforce this.
 - Ethics and data-protection outputs are **drafts**; confirm them with your institution.
 - Sample-size and SAP outputs should be reviewed by a biostatistician. `biostatistics-reviewer` is a first-pass check, not a substitute.
 - Names and versions of reporting guidelines and numeric criteria in the ML modules are pointers to verify; check current versions before citing.

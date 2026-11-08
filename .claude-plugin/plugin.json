@@ -1,7 +1,7 @@
 {
   "name": "clinical-research-copilot",
   "version": "0.4.0",
-  "description": "Guides clinical research design from hypothesis to ethics application and manuscript: skills for hypothesis, design and feasibility, sample size, data dictionary, SAP, ethics, and venue selection, plus optional prediction-model/ML and LLM-extraction modules and reviewer agents. Literature review is delegated to dedicated tools (for example the lr-ai plugin).",
+  "description": "Guides clinical research design from hypothesis to ethics application and manuscript: skills for hypothesis, design and feasibility, sample size, data dictionary, SAP, ethics, and venue selection, plus optional prediction-model/ML and LLM-extraction modules and reviewer agents. Literature review is delegated to dedicated tools (for example the lr-ai plugin); a PubMed bridge adds a MeSH-aware PubMed search to an lr-ai review.",
   "author": {
     "name": "farukss54-bit",
     "url": "https://github.com/farukss54-bit"
